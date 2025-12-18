@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto de la IA - Menú</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 260px;
+            box-shadow: 0 20px 60px rgba(0, 28, 60, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .nav-logo {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo-icon {
+            font-size: 1.8em;
+            display: block;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3));
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link:active {
+            transform: translateX(8px) scale(0.98);
+        }
+
+        .nav-icon {
+            font-size: 1.3em;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+            padding: 14px;
+            border-radius: 12px;
+            z-index: 1001;
+            box-shadow: 0 8px 24px rgba(0, 28, 60, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 28, 60, 0.5);
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(9px, 9px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(9px, -9px);
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Estilos para móvil */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100%;
+                max-width: 300px;
+                transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1000;
+                border-radius: 0 24px 24px 0;
+                overflow-y: auto;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                max-width: 280px;
+            }
+
+            .nav-logo {
+                font-size: 1.3em;
+            }
+
+            .nav-logo-icon {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">🤖</span>
+            Instituto de la IA
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#curso-completo" class="nav-link">
+                    <span class="nav-icon">📚</span>
+                    <span>Curso Completo</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#dia-1" class="nav-link">
+                    <span class="nav-icon">1️⃣</span>
+                    <span>Día 1</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#dia-2" class="nav-link">
+                    <span class="nav-icon">2️⃣</span>
+                    <span>Día 2</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#dia-3" class="nav-link">
+                    <span class="nav-icon">3️⃣</span>
+                    <span>Día 3</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#dia-4" class="nav-link">
+                    <span class="nav-icon">4️⃣</span>
+                    <span>Día 4</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#quiz-final" class="nav-link">
+                    <span class="nav-icon">🏆</span>
+                    <span>Quiz Final</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            const overlay = document.getElementById('menuOverlay');
+
+            sidebar.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            const overlay = document.getElementById('menuOverlay');
+
+            sidebar.classList.remove('active');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function navegarA(seccion) {
+            closeMenu();
+            // Aquí puedes agregar la lógica real de navegación
+            console.log('Navegando a: ' + seccion);
+            // window.location.href = seccion + '.html';
+        }
+
+        // Cerrar menú al cambiar tamaño de ventana a desktop
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
+
+        // Cerrar menú con tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<style>
+    /* Variables de colores Instituto de la IA */
+    :root {
+        --ia-primary-dark: #001C3C;
+        --ia-primary-medium: #003366;
+        --ia-accent: #0066CC;
+    }
+
+    .ia-dashboard-header-logout {
+        background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+        padding: 8px 12px;
+        box-shadow: 0 2px 8px rgba(0, 28, 60, 0.2);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .header-logout-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Logo Section */
+    .header-logout-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .logout-logo-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .logout-logo-title {
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+        line-height: 1;
+    }
+
+    .logout-logo-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    /* Buttons Section */
+    .header-logout-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .header-logout-btn {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .btn-login {
+        background: white;
+        color: #001C3C;
+        box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-login:hover {
+        background: #f0f0f0;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-register {
+        background: #0066CC;
+        color: white;
+        box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+    }
+
+    .btn-register:hover {
+        background: #0052A3;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 12px rgba(0, 102, 204, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .header-logout-buttons {
+            gap: 6px;
+        }
+
+        .header-logout-btn {
+            padding: 5px 12px;
+            font-size: 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .ia-dashboard-header-logout {
+            padding: 8px 10px;
+        }
+
+        .header-logout-content {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .header-logout-logo {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .header-logout-buttons {
+            flex: 1;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .logout-logo-title {
+            font-size: 13px;
+        }
+
+        .logout-logo-subtitle {
+            font-size: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header-logout-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-logout-logo {
+            justify-content: center;
+        }
+
+        .header-logout-buttons {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .header-logout-btn {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Header Dashboard - Logged Out -->
+<header class="ia-dashboard-header-logout">
+    <div class="header-logout-content">
+        <a href="https://institutodelaia.com" class="header-logout-logo">
+            <div class="logout-logo-text">
+                <span class="logout-logo-title">INSTITUTO DE LA IA</span>
+                <span class="logout-logo-subtitle">Plataforma Educativa</span>
+            </div>
+        </a>
+
+        <div class="header-logout-buttons">
+            <a href="https://panel.institutodelaia.com" class="header-logout-btn btn-login">
+                🔐 Acceder al Panel
+            </a>
+
+            <a href="https://panel.institutodelaia.com/" class="header-logout-btn btn-register">
+                ✨ Registrarse
+            </a>
+        </div>
+    </div>
+</header>

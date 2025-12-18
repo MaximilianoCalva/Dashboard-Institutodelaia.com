@@ -1,0 +1,199 @@
+<style>
+    /* Variables de colores Instituto de la IA */
+    :root {
+        --ia-primary-dark: #001C3C;
+        --ia-primary-medium: #003366;
+        --ia-accent: #0066CC;
+    }
+
+    .ia-dashboard-header {
+        background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+        padding: 8px 12px;
+        box-shadow: 0 2px 8px rgba(0, 28, 60, 0.2);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Logo Section */
+    .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .logo-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .logo-title {
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+        line-height: 1;
+    }
+
+    .logo-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    /* User Section */
+    .header-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .header-btn {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .btn-dashboard {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-dashboard:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .btn-support {
+        background: #0066CC;
+        color: white;
+    }
+
+    .btn-support:hover {
+        background: #0052A3;
+        transform: translateY(-1px);
+    }
+
+    .btn-logout {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-logout:hover {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .header-user {
+            gap: 6px;
+        }
+
+        .header-btn {
+            padding: 5px 10px;
+            font-size: 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .ia-dashboard-header {
+            padding: 8px 10px;
+        }
+
+        .header-content {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .header-logo {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .header-user {
+            flex: 1;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .logo-title {
+            font-size: 13px;
+        }
+
+        .logo-subtitle {
+            font-size: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-logo {
+            justify-content: center;
+        }
+
+        .header-user {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .header-btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 0;
+        }
+    }
+</style>
+
+<!-- Header Dashboard - Logged In -->
+<header class="ia-dashboard-header">
+    <div class="header-content">
+        <a href="https://institutodelaia.com" class="header-logo">
+            <div class="logo-text">
+                <span class="logo-title">INSTITUTO DE LA IA</span>
+                <span class="logo-subtitle">Dashboard</span>
+            </div>
+        </a>
+
+        <div class="header-user">
+            <a href="https://panel.institutodelaia.com/alumnos/" class="header-btn btn-dashboard">
+                📊 Dashboard
+            </a>
+
+            <a href="https://wa.me/5213334054655" target="_blank" class="header-btn btn-support">
+                💬 Soporte
+            </a>
+
+            <a href="https://panel.institutodelaia.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2Fpanel.institutodelaia.com"
+                class="header-btn btn-logout">
+                🚪 Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</header>

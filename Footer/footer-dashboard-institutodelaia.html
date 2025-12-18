@@ -1,0 +1,233 @@
+<style>
+    .ia-footer {
+        background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+        color: white;
+        padding: 40px 20px 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        margin-top: 60px;
+        border-radius: 20px 20px 0 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ia-footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .footer-section h3 {
+        font-size: 1.1em;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-section p,
+    .footer-section a {
+        font-size: 0.9em;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .footer-section a:hover {
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .social-links {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        font-size: 1.2em;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .contact-icon {
+        font-size: 1.2em;
+        flex-shrink: 0;
+    }
+
+    .footer-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 30px 0 20px;
+    }
+
+    .footer-bottom {
+        text-align: center;
+    }
+
+    .footer-logo {
+        font-size: 1.5em;
+        font-weight: 800;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .footer-copyright {
+        font-size: 0.85em;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 5px;
+    }
+
+    .footer-credits {
+        font-size: 0.75em;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .ia-footer {
+            padding: 30px 15px 15px;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .footer-section {
+            text-align: center;
+        }
+
+        .social-links {
+            justify-content: center;
+        }
+
+        .contact-item {
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Footer Dashboard Instituto de la IA -->
+<footer class="ia-footer">
+    <div class="footer-content">
+        <div class="footer-grid">
+            <!-- Sobre Nosotros -->
+            <div class="footer-section">
+                <h3>🤖 Instituto de la IA</h3>
+                <p>
+                    Formación especializada en Inteligencia Artificial para profesionales de la salud y bienestar.
+                </p>
+                <p>
+                    Transformando el futuro con tecnología y conocimiento.
+                </p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="footer-section">
+                <h3>🔗 Enlaces Rápidos</h3>
+                <a href="https://panel.institutodelaia.com/alumnos/" target="_blank">Dashboard</a>
+                <a href="https://panel.institutodelaia.com/courses/curso-exclusivo-de-inteligencia-artificial-para-alumnos-y-graduados-del-instituto-idebio-idecf-y-idemab/"
+                    target="_blank">Curso Completo</a>
+                <a href="https://institutodelaia.com" target="_blank">Sitio Web</a>
+                <a href="https://panel.institutodelaia.com/alumnos/" target="_blank">Mis Certificados</a>
+            </div>
+
+            <!-- Contacto -->
+            <div class="footer-section">
+                <h3>📞 Contacto</h3>
+                <div class="contact-item">
+                    <span class="contact-icon">💬</span>
+                    <a href="https://wa.me/5213334054655" target="_blank">WhatsApp: +52 1 33 3405 4655</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span>Email: contacto@institutodelaia.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🌐</span>
+                    <a href="https://institutodelaia.com" target="_blank">institutodelaia.com</a>
+                </div>
+            </div>
+
+            <!-- Redes Sociales -->
+            <div class="footer-section">
+                <h3>🌟 Síguenos</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/institutodelaia" target="_blank" class="social-link"
+                        title="Facebook">📘</a>
+                    <a href="https://www.instagram.com/institutodelaia" target="_blank" class="social-link"
+                        title="Instagram">📷</a>
+                    <a href="https://www.youtube.com/@institutodelaia" target="_blank" class="social-link"
+                        title="YouTube">📺</a>
+                    <a href="https://www.linkedin.com/company/institutodelaia" target="_blank" class="social-link"
+                        title="LinkedIn">💼</a>
+                    <a href="https://twitter.com/institutodelaia" target="_blank" class="social-link"
+                        title="Twitter">🐦</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-bottom">
+            <div class="footer-logo">
+                <span>🤖</span>
+                <span>Instituto de la IA</span>
+            </div>
+            <p class="footer-copyright">
+                © 2024-2026 Instituto de la IA. Todos los derechos reservados.
+            </p>
+            <p class="footer-credits">
+                Plataforma educativa exclusiva para alumnos y graduados de IDEBIO, IDECF e IDEMAB
+            </p>
+        </div>
+    </div>
+</footer>
