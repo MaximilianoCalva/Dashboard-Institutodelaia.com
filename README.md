@@ -1,6 +1,6 @@
 # Dashboard Instituto de la IA - Guía de Uso
 
-**Versión**: 2.0.0  
+**Versión**: 2.1.0  
 **Última actualización**: Enero 2026
 
 ## 📋 Descripción
