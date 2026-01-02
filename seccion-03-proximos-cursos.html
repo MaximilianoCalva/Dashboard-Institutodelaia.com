@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Próximos Cursos - Instituto de la IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: transparent;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 1.8em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #001C3C 0%, #0066CC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 0.9em;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .dates-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0, 28, 60, 0.15);
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dates-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #001C3C 0%, #0066CC 100%);
+        }
+
+        .dates-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 28, 60, 0.2);
+            border-color: #001C3C;
+        }
+
+        .dates-info {
+            display: grid;
+            gap: 10px;
+        }
+
+        .date-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border-left: 4px solid #001C3C;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .date-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 28, 60, 0.05), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .date-row:hover::before {
+            left: 100%;
+        }
+
+        .date-row:hover {
+            background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
+            border-left-color: #0066CC;
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(0, 28, 60, 0.2);
+        }
+
+        .date-row:hover .date-content {
+            color: white;
+        }
+
+        .date-row:hover .date-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .date-row:hover .date-value {
+            color: white;
+        }
+
+        .date-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 8px rgba(0, 28, 60, 0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .date-row:hover .date-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .date-content {
+            flex: 1;
+            transition: color 0.3s ease;
+        }
+
+        .date-label {
+            font-size: 0.7em;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .date-value {
+            font-size: 1.1em;
+            color: #001C3C;
+            font-weight: 800;
+            line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .section-title h2 {
+                font-size: 2em;
+            }
+
+            .dates-card {
+                padding: 50px;
+            }
+
+            .date-row {
+                gap: 15px;
+                padding: 16px;
+            }
+
+            .date-icon {
+                font-size: 2em;
+            }
+
+            .date-value {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .section-title h2 {
+                font-size: 1.6em;
+            }
+
+            .section-subtitle {
+                font-size: 0.95em;
+            }
+
+            .dates-card {
+                padding: 40px;
+            }
+
+            .date-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .date-icon {
+                font-size: 2.5em;
+            }
+
+            .date-value {
+                font-size: 1.05em;
+            }
+        }
+
+        /* Animación de entrada */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dates-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .date-row:nth-child(1) {
+            animation: fadeInUp 0.6s ease-out 0.1s backwards;
+        }
+
+        .date-row:nth-child(2) {
+            animation: fadeInUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .date-row:nth-child(3) {
+            animation: fadeInUp 0.6s ease-out 0.3s backwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="section-title">
+            <h2>📅 Próximos Cursos</h2>
+            <p class="section-subtitle">Información de fechas y horarios</p>
+        </div>
+
+        <div class="dates-card">
+            <div class="dates-info">
+                <div class="date-row">
+                    <div class="date-icon">📅</div>
+                    <div class="date-content">
+                        <div class="date-label">Fechas del Curso</div>
+                        <div class="date-value">15 al 18 de Diciembre</div>
+                    </div>
+                </div>
+
+                <div class="date-row">
+                    <div class="date-icon">🕐</div>
+                    <div class="date-content">
+                        <div class="date-label">Horario</div>
+                        <div class="date-value">7:00 PM - 9:00 PM</div>
+                    </div>
+                </div>
+
+                <div class="date-row">
+                    <div class="date-icon">📆</div>
+                    <div class="date-content">
+                        <div class="date-label">Duración</div>
+                        <div class="date-value">4 Días Intensivos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funcionalidad para expandir/contraer en móvil
+        if (window.innerWidth <= 768) {
+            const datesCard = document.querySelector('.dates-card');
+            let isExpanded = true;
+
+            // Opcional: agregar funcionalidad de colapso en móvil
+            // Descomenta si deseas esta funcionalidad
+            /*
+            const cardHeader = document.createElement('div');
+            cardHeader.style.cursor = 'pointer';
+            cardHeader.addEventListener('click', function() {
+                isExpanded = !isExpanded;
+                const datesInfo = document.querySelector('.dates-info');
+                datesInfo.style.display = isExpanded ? 'grid' : 'none';
+            });
+            */
+        }
+
+        // Reiniciar funcionalidad al cambiar tamaño de ventana
+        window.addEventListener('resize', function () {
+            const datesInfo = document.querySelector('.dates-info');
+            if (window.innerWidth > 768) {
+                datesInfo.style.display = 'grid';
+            }
+        });
+    </script>
+</body>
+
+</html>
