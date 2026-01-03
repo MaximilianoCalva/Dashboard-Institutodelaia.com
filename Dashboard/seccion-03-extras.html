@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Próximos Cursos - Instituto de la IA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <title>Comunidad - Instituto de la IA</title>
     <style>
         * {
             margin: 0;
@@ -22,40 +20,40 @@
         }
 
         .container {
-            max-width: 600px;
+            width: 100%;
             margin: 0;
-            padding: 0;
+            padding: 0 5px;
         }
 
         .section-title {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 8px;
         }
 
         .section-title h2 {
-            font-size: 1.8em;
-            font-weight: 900;
+            font-size: 1.1em;
+            font-weight: 800;
             background: linear-gradient(135deg, #001C3C 0%, #0066CC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            margin-bottom: 3px;
+            letter-spacing: -0.2px;
         }
 
         .section-subtitle {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: #64748b;
             font-weight: 600;
         }
 
         .dates-card {
             background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 20px 60px rgba(0, 28, 60, 0.15);
-            border: 2px solid #e2e8f0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 6px 18px rgba(0, 28, 60, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -66,13 +64,13 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
+            height: 3px;
             background: linear-gradient(90deg, #001C3C 0%, #0066CC 100%);
         }
 
         .dates-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 70px rgba(0, 28, 60, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 28, 60, 0.15);
             border-color: #001C3C;
         }
 
@@ -162,121 +160,76 @@
             transition: color 0.3s ease;
         }
 
+
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .container {
+                padding: 0 5px;
+            }
+
             .section-title h2 {
-                font-size: 2em;
+                font-size: 1em;
+            }
+
+            .section-subtitle {
+                font-size: 0.7em;
             }
 
             .dates-card {
-                padding: 20px;
-            }
-
-            .date-row {
-                gap: 15px;
-                padding: 16px;
-            }
-
-            .date-icon {
-                font-size: 2em;
-            }
-
-            .date-value {
-                font-size: 1.1em;
+                padding: 10px;
             }
         }
 
         @media (max-width: 480px) {
-            .section-title h2 {
-                font-size: 1.6em;
+            .container {
+                padding: 0 3px;
             }
 
-            .section-subtitle {
+            .section-title {
+                margin-bottom: 6px;
+            }
+
+            .section-title h2 {
                 font-size: 0.95em;
             }
 
+            .section-subtitle {
+                font-size: 0.65em;
+            }
+
             .dates-card {
-                padding: 15px;
+                padding: 8px;
+                border-radius: 8px;
             }
-
-            .date-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            .date-icon {
-                font-size: 2.5em;
-            }
-
-            .date-value {
-                font-size: 1.05em;
-            }
-        }
-
-        /* Animación de entrada */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .dates-card {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .date-row:nth-child(1) {
-            animation: fadeInUp 0.6s ease-out 0.1s backwards;
-        }
-
-        .date-row:nth-child(2) {
-            animation: fadeInUp 0.6s ease-out 0.2s backwards;
-        }
-
-        .date-row:nth-child(3) {
-            animation: fadeInUp 0.6s ease-out 0.3s backwards;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <!-- Sección de Comunidad WhatsApp -->
         <div class="section-title">
-            <h2>📅 Próximos Cursos</h2>
-            <p class="section-subtitle">Información de fechas y horarios</p>
+            <h2>💬 Únete a la Comunidad</h2>
+            <p class="section-subtitle">Mantente conectado con otros estudiantes</p>
         </div>
 
-        <div class="dates-card">
-            <div class="dates-info">
-                <div class="date-row">
-                    <div class="date-icon">📅</div>
-                    <div class="date-content">
-                        <div class="date-label">Fechas del Curso</div>
-                        <div class="date-value">15 al 18 de Diciembre</div>
-                    </div>
-                </div>
-
-                <div class="date-row">
-                    <div class="date-icon">🕐</div>
-                    <div class="date-content">
-                        <div class="date-label">Horario</div>
-                        <div class="date-value">7:00 PM - 9:00 PM</div>
-                    </div>
-                </div>
-
-                <div class="date-row">
-                    <div class="date-icon">📆</div>
-                    <div class="date-content">
-                        <div class="date-label">Duración</div>
-                        <div class="date-value">4 Días Intensivos</div>
-                    </div>
-                </div>
+        <div class="dates-card" style="text-align: center;">
+            <div style="margin-bottom: 8px;">
+                <div style="font-size: 1.5em; margin-bottom: 5px;">📱</div>
+                <h3 style="font-size: 0.95em; color: #001C3C; font-weight: 800; margin-bottom: 4px;">Canal de WhatsApp
+                </h3>
+                <p style="color: #64748b; font-size: 0.75em; line-height: 1.4; margin-bottom: 8px;">
+                    Únete para recibir actualizaciones y recursos exclusivos.
+                </p>
             </div>
+            <a href="https://whatsapp.com/channel/0029VbB3YKfGehEKc3jYyc3A" target="_blank"
+                style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 18px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 0.85em; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(37, 211, 102, 0.35)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(37, 211, 102, 0.25)'">
+                <span style="font-size: 1.1em;">💬</span>
+                <span>Unirme al Canal</span>
+            </a>
         </div>
     </div>
 
