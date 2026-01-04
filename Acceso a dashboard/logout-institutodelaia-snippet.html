@@ -17,8 +17,22 @@
     }
 
     .ia-logout-form .login-header .header-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ia-logout-form .login-header .header-icon svg {
+        width: 40px;
+        height: 40px;
+        stroke: #FFFFFF;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
 
     .ia-logout-form .login-header h1 {
@@ -34,8 +48,67 @@
         color: #FFFFFF;
     }
 
-    .ia-logout-form .login-body {
+    /* Tabs Navigation */
+    .tabs-navigation {
+        display: flex;
+        border-bottom: 2px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .tab-button {
+        flex: 1;
+        padding: 16px 20px;
+        background: transparent;
+        border: none;
+        font-size: 15px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .tab-button:hover {
+        color: #001C3C;
+        background: #f3f4f6;
+    }
+
+    .tab-button.active {
+        color: #001C3C;
+        background: #FFFFFF;
+    }
+
+    .tab-button.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(135deg, #001C3C 0%, #0066CC 100%);
+    }
+
+    /* Tab Content */
+    .tab-content {
+        display: none;
         padding: 40px 30px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .ia-logout-form .login-instructions {
@@ -58,7 +131,7 @@
             font-size: 24px;
         }
 
-        .ia-logout-form .login-body {
+        .tab-content {
             padding: 30px 20px;
         }
     }
@@ -66,14 +139,63 @@
 
 <div class="ia-logout-form">
     <div class="login-header">
-        <div class="header-icon">🤖</div>
+        <div class="header-icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="6" cy="6" r="3"></circle>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="12" r="3"></circle>
+                <line x1="9" y1="7.5" x2="15.5" y2="10.8"></line>
+                <line x1="9" y1="16.5" x2="15.5" y2="13.2"></line>
+            </svg>
+        </div>
         <h1>Instituto de la IA</h1>
         <p>Domina la IA Generativa con Estrategia</p>
     </div>
-    <div class="login-body">
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-navigation">
+        <button class="tab-button active" onclick="switchTab('login')">
+            Iniciar Sesión
+        </button>
+        <button class="tab-button" onclick="switchTab('register')">
+            Registrarse
+        </button>
+    </div>
+
+    <!-- Tab Content: Login -->
+    <div id="login-tab" class="tab-content active">
         <p class="login-instructions">
             Ingresa tu correo y contraseña para acceder a tu dashboard
         </p>
-        [profilepress-login id="1"]
+        [ultimatemember form_id="27"]
+    </div>
+
+    <!-- Tab Content: Register -->
+    <div id="register-tab" class="tab-content">
+        <p class="login-instructions">
+            Crea tu cuenta para unirte a nuestra comunidad
+        </p>
+        [ultimatemember form_id="26"]
     </div>
 </div>
+
+<script>
+    function switchTab(tabName) {
+        // Ocultar todos los tabs
+        const allTabs = document.querySelectorAll('.tab-content');
+        allTabs.forEach(tab => tab.classList.remove('active'));
+
+        // Desactivar todos los botones
+        const allButtons = document.querySelectorAll('.tab-button');
+        allButtons.forEach(button => button.classList.remove('active'));
+
+        // Activar el tab seleccionado
+        if (tabName === 'login') {
+            document.getElementById('login-tab').classList.add('active');
+            document.querySelectorAll('.tab-button')[0].classList.add('active');
+        } else if (tabName === 'register') {
+            document.getElementById('register-tab').classList.add('active');
+            document.querySelectorAll('.tab-button')[1].classList.add('active');
+        }
+    }
+</script>
