@@ -1,182 +1,172 @@
+<!-- HEADER INSTITUTO DE LA IA - LOGGED OUT (Usuario no autenticado) -->
+<div class="ia-dashboard-header">
+    <div class="header-content">
+        <a href="https://institutodelaia.com/" class="header-logo">
+            <div class="logo-text">
+                <span class="logo-title">INSTITUTO DE LA IA</span>
+                <span class="logo-subtitle">Acceso a Alumnos</span>
+            </div>
+        </a>
+
+        <!-- Botón directo (Sin menú hamburguesa) -->
+        <div class="header-user">
+            <a href="https://panel.institutodelaia.com/" class="header-btn btn-login" title="Acceder al Panel">
+                <span class="btn-icon">🔑</span>
+                <span class="btn-label">Acceder</span>
+            </a>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Variables de colores Instituto de la IA */
-    :root {
+    .ia-dashboard-header {
         --ia-primary-dark: #001C3C;
         --ia-primary-medium: #003366;
         --ia-accent: #0066CC;
-    }
+        --ia-white: #FFFFFF;
 
-    .ia-dashboard-header-logout {
         background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
-        padding: 8px 12px;
+        padding: 5px 15px;
         box-shadow: 0 2px 8px rgba(0, 28, 60, 0.2);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        width: 100%;
+        position: relative;
+        z-index: 1000;
+        min-height: 55px;
     }
 
-    .header-logout-content {
+    .ia-dashboard-header * {
+        box-sizing: border-box;
+    }
+
+    .header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
+        max-width: 1200px;
+        margin: 0 auto;
+        height: 100%;
     }
 
     /* Logo Section */
-    .header-logout-logo {
+    .header-logo {
         display: flex;
         align-items: center;
         gap: 8px;
         text-decoration: none;
+        cursor: pointer;
+        flex-shrink: 0;
     }
 
-    .logout-logo-text {
+    .logo-text {
         display: flex;
         flex-direction: column;
         gap: 1px;
     }
 
-    .logout-logo-title {
-        color: white;
-        font-size: 14px;
+    .logo-title {
+        color: var(--ia-white);
+        font-size: 16px;
         font-weight: 800;
         letter-spacing: -0.3px;
         line-height: 1;
     }
 
-    .logout-logo-subtitle {
+    .logo-subtitle {
         color: rgba(255, 255, 255, 0.7);
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.3px;
     }
 
-    /* Buttons Section */
-    .header-logout-buttons {
+    /* User Section */
+    .header-user {
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
     }
 
-    .header-logout-btn {
-        padding: 6px 14px;
+    /* Buttons */
+    .header-btn {
+        padding: 8px 18px;
         border-radius: 50px;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 700;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         white-space: nowrap;
+        line-height: 1;
     }
 
     .btn-login {
-        background: white;
-        color: #001C3C;
-        box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+        background: var(--ia-white);
+        color: var(--ia-primary-dark);
+        border: 1px solid transparent;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .btn-login:hover {
         background: #f0f0f0;
         transform: translateY(-1px);
-        box-shadow: 0 3px 12px rgba(255, 255, 255, 0.3);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .btn-register {
-        background: #0066CC;
-        color: white;
-        box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
-    }
-
-    .btn-register:hover {
-        background: #0052A3;
-        transform: translateY(-1px);
-        box-shadow: 0 3px 12px rgba(0, 102, 204, 0.4);
+    .btn-icon {
+        font-size: 14px;
+        line-height: 1;
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
-        .header-logout-buttons {
-            gap: 6px;
-        }
-
-        .header-logout-btn {
-            padding: 5px 12px;
-            font-size: 10px;
-        }
-    }
-
     @media (max-width: 768px) {
-        .ia-dashboard-header-logout {
-            padding: 8px 10px;
+        .ia-dashboard-header {
+            padding: 5px 10px;
         }
 
-        .header-logout-content {
-            flex-wrap: wrap;
-            gap: 8px;
+        .logo-title {
+            font-size: 15px;
         }
 
-        .header-logout-logo {
-            flex: 1;
-            min-width: 120px;
+        .logo-subtitle {
+            display: none;
         }
 
-        .header-logout-buttons {
-            flex: 1;
-            justify-content: flex-end;
-            gap: 5px;
+        /* Optimización Móvil */
+        .btn-label {
+            display: none;
         }
 
-        .logout-logo-title {
-            font-size: 13px;
+        .btn-login::after {
+            content: "Acceder";
         }
 
-        .logout-logo-subtitle {
-            font-size: 8px;
+        .header-btn {
+            padding: 8px 16px;
         }
     }
 
-    @media (max-width: 480px) {
-        .header-logout-content {
-            flex-direction: column;
-            align-items: stretch;
+    @media (max-width: 360px) {
+
+        /* Pantallas muy pequeñas: Solo icono */
+        .btn-login::after {
+            display: none;
         }
 
-        .header-logout-logo {
+        .header-btn {
+            padding: 8px;
+            width: 36px;
+            height: 36px;
             justify-content: center;
+            border-radius: 50%;
         }
 
-        .header-logout-buttons {
-            justify-content: center;
-            width: 100%;
-        }
-
-        .header-logout-btn {
-            flex: 1;
-            justify-content: center;
+        .btn-icon {
+            font-size: 16px;
+            margin: 0;
         }
     }
 </style>
-
-<!-- Header Dashboard - Logged Out -->
-<header class="ia-dashboard-header-logout">
-    <div class="header-logout-content">
-        <a href="https://institutodelaia.com" class="header-logout-logo">
-            <div class="logout-logo-text">
-                <span class="logout-logo-title">INSTITUTO DE LA IA</span>
-                <span class="logout-logo-subtitle">Plataforma Educativa</span>
-            </div>
-        </a>
-
-        <div class="header-logout-buttons">
-            <a href="https://panel.institutodelaia.com" class="header-logout-btn btn-login">
-                🔐 Acceder al Panel
-            </a>
-
-            <a href="https://panel.institutodelaia.com/" class="header-logout-btn btn-register">
-                ✨ Registrarse
-            </a>
-        </div>
-    </div>
-</header>

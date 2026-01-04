@@ -1,31 +1,79 @@
+<!-- HEADER INSTITUTO DE LA IA - LOGGED IN (Usuario autenticado) -->
+<div class="ia-dashboard-header">
+    <div class="header-content">
+        <a href="https://institutodelaia.com/" class="header-logo">
+            <div class="logo-text">
+                <span class="logo-title">INSTITUTO DE LA IA</span>
+                <span class="logo-subtitle">Dashboard</span>
+            </div>
+        </a>
+
+        <!-- Botones directos (Sin menú hamburguesa) -->
+        <div class="header-user">
+            <!-- Dashboard -->
+            <a href="https://panel.institutodelaia.com/alumnos/" class="header-btn btn-dashboard"
+                title="Ir al Dashboard">
+                <span class="btn-icon">📊</span>
+                <span class="btn-label">Dashboard</span>
+            </a>
+
+            <!-- Soporte -->
+            <a href="https://wa.me/5213334054655" target="_blank" class="header-btn btn-support"
+                title="Soporte por WhatsApp">
+                <span class="btn-icon">💬</span>
+                <span class="btn-label">Soporte</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="https://panel.institutodelaia.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2Fpanel.institutodelaia.com"
+                class="header-btn btn-logout" title="Cerrar Sesión">
+                <span class="btn-icon">🚪</span>
+                <span class="btn-label">Salir</span>
+            </a>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Variables de colores Instituto de la IA */
-    :root {
+    .ia-dashboard-header {
         --ia-primary-dark: #001C3C;
         --ia-primary-medium: #003366;
         --ia-accent: #0066CC;
-    }
+        --ia-white: #FFFFFF;
 
-    .ia-dashboard-header {
         background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
-        padding: 8px 12px;
+        padding: 5px 15px;
         box-shadow: 0 2px 8px rgba(0, 28, 60, 0.2);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        width: 100%;
+        position: relative;
+        z-index: 1000;
+        min-height: 55px;
+    }
+
+    .ia-dashboard-header * {
+        box-sizing: border-box;
     }
 
     .header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
+        max-width: 1200px;
+        margin: 0 auto;
+        height: 100%;
     }
 
-    /* Logo Section */
+    /* Branding */
     .header-logo {
         display: flex;
         align-items: center;
         gap: 8px;
         text-decoration: none;
+        cursor: pointer;
+        flex-shrink: 0;
     }
 
     .logo-text {
@@ -35,8 +83,8 @@
     }
 
     .logo-title {
-        color: white;
-        font-size: 14px;
+        color: var(--ia-white);
+        font-size: 16px;
         font-weight: 800;
         letter-spacing: -0.3px;
         line-height: 1;
@@ -44,7 +92,7 @@
 
     .logo-subtitle {
         color: rgba(255, 255, 255, 0.7);
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.3px;
@@ -54,28 +102,34 @@
     .header-user {
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 10px;
     }
 
     /* Buttons */
     .header-btn {
-        padding: 6px 12px;
+        padding: 6px 14px;
         border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 600;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         white-space: nowrap;
+        line-height: 1;
     }
 
+    .btn-icon {
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    /* Estilos Botones específicos */
     .btn-dashboard {
         background: rgba(255, 255, 255, 0.15);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .btn-dashboard:hover {
@@ -86,6 +140,7 @@
     .btn-support {
         background: #0066CC;
         color: white;
+        border: 1px solid transparent;
     }
 
     .btn-support:hover {
@@ -95,105 +150,49 @@
 
     .btn-logout {
         background: transparent;
-        color: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .btn-logout:hover {
-        background: #ef4444;
+        background: rgba(239, 68, 68, 0.2);
         border-color: #ef4444;
         color: white;
-        transform: translateY(-1px);
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
-        .header-user {
-            gap: 6px;
-        }
-
-        .header-btn {
-            padding: 5px 10px;
-            font-size: 10px;
-        }
-    }
-
     @media (max-width: 768px) {
         .ia-dashboard-header {
-            padding: 8px 10px;
-        }
-
-        .header-content {
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .header-logo {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .header-user {
-            flex: 1;
-            justify-content: flex-end;
-            gap: 5px;
+            padding: 5px 10px;
         }
 
         .logo-title {
-            font-size: 13px;
+            font-size: 15px;
         }
 
         .logo-subtitle {
-            font-size: 8px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .header-content {
-            flex-direction: column;
-            align-items: stretch;
+            display: none;
         }
 
-        .header-logo {
-            justify-content: center;
-        }
-
-        .header-user {
-            justify-content: center;
-            width: 100%;
+        /* En móvil: Ocultar texto, mostrar solo emojis */
+        .btn-label {
+            display: none;
         }
 
         .header-btn {
-            flex: 1;
+            padding: 8px;
+            width: 34px;
+            height: 34px;
             justify-content: center;
-            min-width: 0;
+            border-radius: 50%;
+        }
+
+        .btn-icon {
+            font-size: 16px;
+        }
+
+        .header-user {
+            gap: 8px;
         }
     }
 </style>
-
-<!-- Header Dashboard - Logged In -->
-<header class="ia-dashboard-header">
-    <div class="header-content">
-        <a href="https://institutodelaia.com" class="header-logo">
-            <div class="logo-text">
-                <span class="logo-title">INSTITUTO DE LA IA</span>
-                <span class="logo-subtitle">Dashboard</span>
-            </div>
-        </a>
-
-        <div class="header-user">
-            <a href="https://panel.institutodelaia.com/alumnos/" class="header-btn btn-dashboard">
-                📊 Dashboard
-            </a>
-
-            <a href="https://wa.me/5213334054655" target="_blank" class="header-btn btn-support">
-                💬 Soporte
-            </a>
-
-            <a href="https://panel.institutodelaia.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2Fpanel.institutodelaia.com"
-                class="header-btn btn-logout">
-                🚪 Cerrar Sesión
-            </a>
-        </div>
-    </div>
-</header>

@@ -10,15 +10,15 @@
 ## SEO y Metadata
 
 ### Dashboard (Panel de Estudiantes)
-**Título del Sitio:** Instituto de la IA - Mi Dashboard | Plataforma de Aprendizaje  
-**Descripción Corta:** Accede a tu plataforma de aprendizaje en Instituto de la IA. Consulta tus diplomados, cursos, certificados y avanza en tu formación.
+**Título del Sitio:** Instituto de la IA - Panel de Estudiantes | Inteligencia Artificial Aplicada
+**Descripción Corta:** Dashboard oficial del Instituto de la Inteligencia Artificial. Accede a tus cursos, herramientas y comunidad exclusiva de líderes en IA.
 
 ## Colores Institucionales
 
 ### Paleta de Colores
-- **Color Primario:** `#001C3C`
-- **Color Secundario:** `#0066CC`
-- **Color Accent:** `#3399FF`
+- **Color Primario:** `#001C3C` (Azul Noche)
+- **Color Secundario:** `#0066CC` (Azul Tech)
+- **Color Accent:** `#3399FF` (Azul Claro)
 - **Gradiente Principal:** `linear-gradient(135deg, #001C3C 0%, #0066CC 100%)`
 
 ### Colores de Sistema
@@ -28,145 +28,94 @@
 - **Advertencia (Amarillo):** `#f59e0b`
 - **Peligro (Rojo):** `#ef4444`
 
+## Contacto
+
+**Web Principal:** https://institutodelaia.com
+
 ## URLs del Panel
 
 - **Mi Cuenta:** https://panel.institutodelaia.com/mi-cuenta/
 - **Iniciar Sesión:** https://panel.institutodelaia.com/iniciar-sesion/
 - **Panel Access:** https://panel.institutodelaia.com/panel-access/
 
+## Componentes: Headers & Navegación
+
+### Headers (Optimizados Tablet/Mobile 1024px)
+Sistema de headers responsivos con menú hamburguesa para dispositivos con ancho menor a 1024px (tablets y móviles).
+
+#### 1. Header Logged In (Usuario Autenticado)
+**Archivo:** `Header/header-logged-in-institutodelaia.html`
+
+- **Marca:** Logo/Texto "Instituto de la IA" clickeable (redirige a https://institutodelaia.com).
+- **Desktop (>1024px):** Botones visibles:
+  - 📊 Dashboard
+  - 💬 Soporte (WhatsApp)
+  - 🚪 Cerrar Sesión
+- **Tablet/Móvil (≤1024px):** Menú hamburguesa lateral con overlay.
+
+#### 2. Header Logged Out (Usuario No Autenticado)
+**Archivo:** `Header/header-logged-out-institutodelaia.html`
+
+- **Marca:** Logo/Texto clickeable.
+- **Acción:** Botón "Acceso a tu diplomado".
+- **Responsive:** Menú hamburguesa en tablet/móvil.
+
+#### 3. Header Web Principal
+**Archivo:** `header-web-institutodelaia.html` (en repo web)
+- Navegación completa del sitio web.
+- Breakpoint 1024px para menú móvil.
+- Estructura optimizada para máxima velocidad.
+
+### Implementación Técnica
+- **Breakpoint JS/CSS:** 1024px.
+- **Z-Index:** Header (1000), Overlay (998), Menú Lateral (999).
+
 ---
 
-## 📋 Estructura de Sección Inicio
+## Estructura de Sección Inicio (Dashboard)
 
-La sección inicio del Dashboard Instituto de la IA está organizada en **13 componentes** que siguen un flujo lógico de navegación:
+La sección inicio del Dashboard Instituto de la IA está organizada en **13 componentes**:
 
 ### 1️⃣ Header y Bienvenida
-- **01-dashboard-inicio-institutodelaia.html** - Cápsula de título "DASHBOARD" con indicador de inicio
-- **02-bienvenida-institutodelaia.html** - Mensaje de bienvenida personalizado
+- **01-dashboard-inicio-institutodelaia.html** - Título "DASHBOARD".
+- **02-bienvenida-institutodelaia.html** - Mensaje de bienvenida.
 
-### 2️⃣ Avisos para Administrativos y Docentes
-- **03-aviso-admin-docentes-institutodelaia.html** 👥 - Aviso de acceso para administrativos y docentes (con flecha)
-- **04-accesos-rapidos-institutodelaia.html** ⚡ - Accesos rápidos a herramientas principales
+### 2️⃣ Avisos y Accesos
+- **03-aviso-admin-docentes-institutodelaia.html** 👥 - Aviso docentes.
+- **04-accesos-rapidos-institutodelaia.html** ⚡ - Accesos rápidos.
+- **05-aviso-solo-visualizacion-institutodelaia.html** 👁️ - Solo visualización.
+- **06-reglamento-institutodelaia.html** - Reglamento.
+- **07-plataforma-inactiva-institutodelaia.html** - Aviso inactiva.
 
-### 3️⃣ Información Institucional
-- **05-aviso-solo-visualizacion-institutodelaia.html** 👁️ - Aviso de visualización con opción de requisición
-- **06-reglamento-institutodelaia.html** - Visualizador del reglamento institucional
-- **07-plataforma-inactiva-institutodelaia.html** - Aviso de plataforma inactiva
+### 3️⃣ Sección Administrativa
+- **08-aviso-solo-administrativos-institutodelaia.html** 🔒 - Aviso admin.
+- **09-informacion-chatbot-institutodelaia.html** - Chatbot.
+- **10-oferta-activa-institutodelaia.html** - Tabla oferta activa.
+- **11-requisiciones-institutodelaia.html** 📋 - Formularios requisiciones.
+- **12-correos-activos-institutodelaia.html** 📧 - Correos activos.
 
-### 4️⃣ Sección Administrativa
-- **08-aviso-solo-administrativos-institutodelaia.html** 🔒 - Aviso de acceso restringido a administrativos (con flecha)
-- **09-informacion-chatbot-institutodelaia.html** - Información del chatbot institucional
-- **10-oferta-activa-institutodelaia.html** - Tabla de diplomados, cursos y eventos activos
-- **11-requisiciones-institutodelaia.html** 📋 - Formularios de requisiciones
-- **12-correos-activos-institutodelaia.html** 📧 - Lista de cuentas de correo activas
-
-### 5️⃣ Sección Estudiantil
-- **13-aviso-dashboard-estudiantil-institutodelaia.html** 📚 - Aviso de visualización estudiantil (con flecha)
+### 4️⃣ Sección Estudiantil
+- **13-aviso-dashboard-estudiantil-institutodelaia.html** 📚 - Aviso estudiantil.
 
 ---
 
-## 🎨 Componentes de Avisos
+## Recursos Adicionales (Extras)
 
-### Avisos con Flecha Animada ⬇️
-1. **03-aviso-admin-docentes-institutodelaia.html** - Color secundario
-2. **08-aviso-solo-administrativos-institutodelaia.html** - Rojo (#dc3545)
-3. **13-aviso-dashboard-estudiantil-institutodelaia.html** - Color primario
+### Carpeta: `Extras/`
+**Archivo principal:** `extras-grid-institutodelaia.html`
 
-### Avisos sin Flecha
-4. **05-aviso-solo-visualizacion-institutodelaia.html** - Amarillo (#ffc107)
+Grid de recursos con 6 secciones idéntico al sistema central pero con colores Instituto de la IA (#001C3C).
 
 ---
 
-## 📊 Componentes Principales
+## 🛠️ Cómo Usar en Elementor
 
-### Tablas y Visualizadores
-- **10-oferta-activa-institutodelaia.html** - Tabla dinámica conectada a Google Sheets
-- **12-correos-activos-institutodelaia.html** - Tabla con cuentas de correo y estadísticas
-
-### Formularios
-- **11-requisiciones-institutodelaia.html** - Tarjetas con enlaces a Google Forms
+1. **Editar Página**: Usar Elementor.
+2. **Widget HTML**: Arrastrar widget HTML.
+3. **Pegar Código**: Copiar TODO el contenido del archivo HTML (incluyendo `<style>` y `<script>`).
+4. **Guardar**: Publicar cambios.
 
 ---
 
-## 🎯 Flujo de Navegación
-
-```
-┌─────────────────────────────────────┐
-│  01 - Dashboard Inicio              │
-│  02 - Bienvenida                    │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│  SECCIÓN ADMIN/DOCENTES             │
-│  03 - Aviso Admin/Docentes 👥⬇️     │
-│  04 - Accesos Rápidos ⚡            │
-│  05 - Aviso Solo Visualización 👁️  │
-│  06 - Reglamento                    │
-│  07 - Plataforma Inactiva           │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│  SECCIÓN ADMINISTRATIVA             │
-│  08 - Aviso Solo Administrativos🔒⬇️│
-│  09 - Información Chatbot           │
-│  10 - Oferta Activa (Tabla)         │
-│  11 - Requisiciones                 │
-│  12 - Correos Activos               │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│  SECCIÓN ESTUDIANTIL                │
-│  13 - Aviso Dashboard Estudiantil📚⬇│
-└─────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Plataforma y Tecnología
-
-### Stack Tecnológico
-- **CMS**: WordPress
-- **LMS**: LearnDash / Tutor LMS
-- **Constructor**: Elementor Pro
-- **Hosting**: https://panel.institutodelaia.com
-
-### Implementación de Componentes HTML
-
-Todos los componentes HTML de este proyecto están diseñados para ser implementados en **Elementor** usando el widget HTML.
-
-#### Cómo Usar en Elementor:
-
-1. **Editar Página/Template**
-   - Ir a la página del dashboard que deseas editar
-   - Abrir con Elementor
-
-2. **Agregar Widget HTML**
-   - Buscar "HTML" en el panel de widgets de Elementor
-   - Arrastrar el widget a la sección deseada
-
-3. **Copiar y Pegar Código**
-   - Abrir el archivo HTML del componente
-   - Copiar TODO el contenido (incluyendo `<style>` y `<script>`)
-   - Pegar en el widget HTML de Elementor
-
-4. **Guardar y Publicar**
-   - Guardar cambios en Elementor
-   - Publicar la página
-
----
-
-## 📝 Notas Importantes
-
-- ✅ Todos los archivos usan los colores institucionales de Instituto de la IA
-- ✅ Diseño responsive para móviles y tablets
-- ✅ Avisos con flechas animadas para mejorar UX
-- ✅ Numeración secuencial del 01 al 13
-- ✅ Sufijo `-institutodelaia` en todos los archivos para identificación
-- ✅ Archivo consolidado disponible: `seccion-iniicio.html`
-
----
-
-## Última Actualización
-
-**Fecha:** 2 de enero de 2026  
-**Versión:** 3.0
+**Versión:** 4.0 (Update Headers 1024px)
+**Fecha:** Enero 2026
