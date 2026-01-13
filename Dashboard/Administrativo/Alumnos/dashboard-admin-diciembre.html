@@ -141,10 +141,11 @@
             let paymentChartInstance = null;
 
             // URL para DICIEMBRE
-            const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXPQgEGszILO2pKPzoy_KbS6oGOJNyHxQ8swQQcPz95RwyZ9jl7cvqufGg0fRxZtna/exec?sheet=15-18 Diciembre Curso IA G01';
+            const SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbyXPQgEGszILO2pKPzoy_KbS6oGOJNyHxQ8swQQcPz95RwyZ9jl7cvqufGg0fRxZtna/exec';
+            const SHEET_NAME = '15-18 Diciembre Curso IA G01';
 
             function fetchData() {
-                const url = DEFAULT_SCRIPT_URL;
+                const url = `${SCRIPT_BASE_URL}?sheet=${encodeURIComponent(SHEET_NAME)}`;
 
                 if (!url) {
                     alert("Por favor ingresa la URL de tu Google Apps Script");
@@ -163,12 +164,12 @@
                             document.getElementById('loading').classList.add('hidden');
                             document.getElementById('dashboard').classList.remove('hidden');
                         } else {
-                            alert("Error en la estructura de datos: " + JSON.stringify(json) + "\n\nAsegúrate de que la pestaña '15-18 Diciembre Curso IA' exista.");
+                            alert("Error del Script: " + JSON.stringify(json) + "\n\nAsegúrate de que la pestaña exista.");
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert("Error al cargar datos. Verifica la URL y los permisos.");
+                        alert("Error de conexión. \n\nPosibles causas:\n1. No has desplegado el script como 'Cualquier usuario' (Anyone).\n2. Bloqueo de CORS.\n3. Error en la red.");
                         document.getElementById('loading').classList.add('hidden');
                     });
             }
