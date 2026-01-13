@@ -43,25 +43,30 @@
     }
 
     .access-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 24px;
     }
 
     .access-card {
         background: linear-gradient(135deg, #001C3C 0%, #003366 100%);
-        border-radius: 16px;
-        padding: 25px;
+        border-radius: 20px;
+        padding: 32px;
         text-decoration: none;
         color: #FFFFFF;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 8px 24px rgba(0, 28, 60, 0.2);
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         position: relative;
         overflow: hidden;
+        flex: 1 1 350px;
+        /* Grow to fill, min 350px */
+        max-width: 500px;
+        /* Don't get too wide */
     }
 
     .access-card::before {
