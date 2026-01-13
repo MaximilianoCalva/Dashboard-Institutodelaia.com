@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Administrativo - Instituto de la IA</title>
+    <title>Dashboard Administrativo - Diplomado - Instituto de la IA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -24,12 +24,12 @@
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold text-[#1e1b4b]">Dashboard Administrativo</h1>
-                <p class="text-gray-500">19-23 Enero Curso IA</p>
+                <h1 class="text-3xl font-extrabold text-[#1f2937]">Dashboard Administrativo</h1>
+                <p class="text-gray-500">Diplomado IA Lab G01</p>
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="fetchData()"
-                    class="bg-[#4338ca] hover:bg-[#3730a3] text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md">
+                    class="bg-[#7c3aed] hover:bg-[#6d28d9] text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md">
                     Mostrar Datos
                 </button>
             </div>
@@ -37,7 +37,7 @@
 
         <!-- Loading State -->
         <div id="loading" class="hidden text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4338ca]"></div>
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#7c3aed]"></div>
             <p class="mt-2 text-gray-500">Pensando...</p>
         </div>
 
@@ -49,12 +49,12 @@
                 <!-- Total Alumnos -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Alumnos</p>
-                    <h2 class="text-4xl font-extrabold text-[#1e1b4b]" id="totalStudents">0</h2>
+                    <h2 class="text-4xl font-extrabold text-[#1f2937]" id="totalStudents">0</h2>
                 </div>
                 <!-- Total Vendedores -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Vendedores Activos</p>
-                    <h2 class="text-4xl font-extrabold text-[#4338ca]" id="totalSellers">0</h2>
+                    <h2 class="text-4xl font-extrabold text-[#7c3aed]" id="totalSellers">0</h2>
                 </div>
                 <!-- Becas Otorgadas -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -72,7 +72,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Ventas por Vendedor -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-[#1e1b4b] mb-4">Ventas por Vendedor</h3>
+                    <h3 class="text-lg font-bold text-[#1f2937] mb-4">Ventas por Vendedor</h3>
                     <div class="h-64">
                         <canvas id="sellerChart"></canvas>
                     </div>
@@ -80,7 +80,7 @@
 
                 <!-- Métodos de Pago -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-[#1e1b4b] mb-4">Distribución de Pagos y Becas</h3>
+                    <h3 class="text-lg font-bold text-[#1f2937] mb-4">Distribución de Pagos y Becas</h3>
                     <div class="h-64 flex justify-center">
                         <canvas id="paymentChart"></canvas>
                     </div>
@@ -91,7 +91,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Estatus de Alumnos -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-[#1e1b4b] mb-4">Estatus de Alumnos</h3>
+                    <h3 class="text-lg font-bold text-[#1f2937] mb-4">Estatus de Alumnos</h3>
                     <div class="h-64 flex justify-center">
                         <canvas id="statusChart"></canvas>
                     </div>
@@ -99,7 +99,7 @@
 
                 <!-- Top Ciudades -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-[#1e1b4b] mb-4">Top 5 Ciudades</h3>
+                    <h3 class="text-lg font-bold text-[#1f2937] mb-4">Top 5 Ciudades</h3>
                     <div class="h-64">
                         <canvas id="cityChart"></canvas>
                     </div>
@@ -109,7 +109,7 @@
             <!-- Data Table -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-[#1e1b4b]">Base de Datos de Alumnos</h3>
+                    <h3 class="text-lg font-bold text-[#1f2937]">Base de Datos de Alumnos</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-500">
@@ -141,9 +141,11 @@
         let globalData = [];
         let sellerChartInstance = null;
         let paymentChartInstance = null;
+        let statusChartInstance = null;
+        let cityChartInstance = null;
 
-        // Default URL - Replace this if you want to hardcode it later
-        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwESCYCnIR4IUVpFjOl4rwNVOMCfc2TrusnOCaLQ8i0gjARVAwIs53-9cJ0UHKBQ64z/exec?sheet=19-23 Enero Curso IA G02';
+        // URL para DIPLOMADO
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwESCYCnIR4IUVpFjOl4rwNVOMCfc2TrusnOCaLQ8i0gjARVAwIs53-9cJ0UHKBQ64z/exec?sheet=Diplomado IA Lab G01';
 
         function fetchData() {
             const url = DEFAULT_SCRIPT_URL;
@@ -179,47 +181,40 @@
             // --- 1. KPI Calculations ---
             const totalStudents = data.length;
 
-            // Count unique sellers in "Venta" column
             const sellers = {};
-            // Count payment methods
             const paymentMethods = {};
             let totalScholarships = 0;
 
             data.forEach(row => {
-                // Vendedores
                 const seller = row['Venta'] || 'Desconocido';
                 if (seller) {
                     sellers[seller] = (sellers[seller] || 0) + 1;
                 }
 
-                // Métodos de Pago (Normalizar texto)
                 let method = row['Metodo de pago'] || 'Pendiente';
-                method = method.trim(); // Limpieza básica
+                method = method.trim();
 
-                // Detectar Beca si está en método o en columna BECA/COSTO
                 const isScholarship = (row['BECA/COSTO'] && row['BECA/COSTO'].toString().toLowerCase().includes('beca')) ||
                     method.toLowerCase().includes('beca');
 
                 if (isScholarship) {
                     totalScholarships++;
-                    // Agrupar como 'Beca' en gráfica de pagos
                     paymentMethods['Beca'] = (paymentMethods['Beca'] || 0) + 1;
                 } else {
                     paymentMethods[method] = (paymentMethods[method] || 0) + 1;
                 }
             });
 
-            // Update DOM KPIs
             document.getElementById('totalStudents').innerText = totalStudents;
             document.getElementById('totalSellers').innerText = Object.keys(sellers).length;
             document.getElementById('totalScholarships').innerText = totalScholarships;
-            document.getElementById('totalSalesCount').innerText = totalStudents; // Asumiendo 1 alumno = 1 venta
+            document.getElementById('totalSalesCount').innerText = totalStudents;
 
             // --- 2. Chart Rendering ---
             renderSellerChart(sellers);
             renderPaymentChart(paymentMethods);
-            renderStatusChart(data); // New
-            renderCityChart(data);   // New
+            renderStatusChart(data);
+            renderCityChart(data);
 
             // --- 3. Table Populate ---
             populateTable(data);
@@ -227,12 +222,9 @@
 
         function renderSellerChart(sellersData) {
             const ctx = document.getElementById('sellerChart').getContext('2d');
-
             if (sellerChartInstance) sellerChartInstance.destroy();
-
             const labels = Object.keys(sellersData);
             const values = Object.values(sellersData);
-
             sellerChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -240,40 +232,31 @@
                     datasets: [{
                         label: 'Ventas',
                         data: values,
-                        backgroundColor: '#4338ca',
+                        backgroundColor: '#7c3aed', // Purple theme
                         borderRadius: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
         }
 
         function renderPaymentChart(paymentData) {
             const ctx = document.getElementById('paymentChart').getContext('2d');
-
             if (paymentChartInstance) paymentChartInstance.destroy();
-
             const labels = Object.keys(paymentData);
             const values = Object.values(paymentData);
-
-            // Colores personalizados para Transferencia, Paypal, Beca...
             const colors = labels.map(label => {
                 const l = label.toLowerCase();
-                if (l.includes('beca')) return '#10b981'; // Emerald
-                if (l.includes('paypal')) return '#2563eb'; // Blue
-                if (l.includes('transferencia')) return '#f59e0b'; // Amber
-                return '#9ca3af'; // Gray default
+                if (l.includes('beca')) return '#10b981';
+                if (l.includes('paypal')) return '#2563eb';
+                if (l.includes('transferencia')) return '#f59e0b';
+                return '#9ca3af';
             });
-
             paymentChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -287,14 +270,11 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right' }
-                    }
+                    plugins: { legend: { position: 'right' } }
                 }
             });
         }
 
-        let statusChartInstance = null;
         function renderStatusChart(data) {
             const ctx = document.getElementById('statusChart').getContext('2d');
             if (statusChartInstance) statusChartInstance.destroy();
@@ -334,7 +314,6 @@
             });
         }
 
-        let cityChartInstance = null;
         function renderCityChart(data) {
             const ctx = document.getElementById('cityChart').getContext('2d');
             if (cityChartInstance) cityChartInstance.destroy();
@@ -378,19 +357,16 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            // Mostrar todos o limitar a 100 para rendimiento
             data.slice(0, 100).forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = "bg-white border-b hover:bg-gray-50";
 
-                // Status Logic
-                const status = row['Status'] || row['Estatus'] || 'Desconocido';
-                let statusColor = "bg-gray-100 text-gray-800"; // Default
+                const status = row['Status'] || row['status'] || row['Estatus'] || 'Desconocido';
+                let statusColor = "bg-gray-100 text-gray-800";
                 if (status.toLowerCase().includes('activo') || status.toLowerCase() === 'pagado') statusColor = "bg-green-100 text-green-800";
                 if (status.toLowerCase().includes('baja') || status.toLowerCase().includes('cancelado')) statusColor = "bg-red-100 text-red-800";
                 if (status.toLowerCase().includes('pendiente')) statusColor = "bg-yellow-100 text-yellow-800";
 
-                // Mapeo seguro de campos
                 tr.innerHTML = `
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${row['No. ALUMNO'] || '-'}</td>
                     <td class="px-6 py-4">
@@ -407,21 +383,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function filterTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
-
-            for (let i = 0; i < rows.length; i++) {
-                const text = rows[i].textContent || rows[i].innerText;
-                if (text.toLowerCase().indexOf(filter) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
         }
     </script>
 </body>
