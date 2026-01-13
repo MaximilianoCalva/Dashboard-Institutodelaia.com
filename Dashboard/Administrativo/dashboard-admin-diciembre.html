@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo - Diciembre - Instituto de la IA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-[#111827]">Visualización de Alumnos</h1>
+                <p class="text-gray-500">15-18 Diciembre Curso IA</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="fetchData()"
+                    class="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md">
+                    Mostrar Datos
+                </button>
+            </div>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563eb]"></div>
+            <p class="mt-2 text-gray-500">Pensando...</p>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard" class="hidden space-y-8">
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Total Alumnos -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Alumnos</p>
+                    <h2 class="text-4xl font-extrabold text-[#111827]" id="totalStudents">0</h2>
+                </div>
+                <!-- Total Vendedores -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Vendedores Activos</p>
+                    <h2 class="text-4xl font-extrabold text-[#2563eb]" id="totalSellers">0</h2>
+                </div>
+                <!-- Becas Otorgadas -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Becas Otorgadas</p>
+                    <h2 class="text-4xl font-extrabold text-emerald-600" id="totalScholarships">0</h2>
+                </div>
+                <!-- Total Ventas (Estimado) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Ventas Totales</p>
+                    <h2 class="text-4xl font-extrabold text-blue-600" id="totalSalesCount">0</h2>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Ventas por Vendedor -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-[#111827] mb-4">Ventas por Vendedor</h3>
+                    <div class="h-64">
+                        <canvas id="sellerChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Métodos de Pago -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-[#111827] mb-4">Distribución de Pagos y Becas</h3>
+                    <div class="h-64 flex justify-center">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#111827]">Base de Datos de Alumnos</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3">No. Alumno</th>
+                                <th class="px-6 py-3">Nombre</th>
+                                <th class="px-6 py-3">Correo</th>
+                                <th class="px-6 py-3">Ciudad</th>
+                                <th class="px-6 py-3">Vendedor</th>
+                                <th class="px-6 py-3">Pago</th>
+                                <th class="px-6 py-3">Método</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Rows will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-gray-100 text-center text-xs text-gray-400">
+                    Mostrando últimos 50 registros por defecto
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let globalData = [];
+        let sellerChartInstance = null;
+        let paymentChartInstance = null;
+
+        // URL para DICIEMBRE
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwESCYCnIR4IUVpFjOl4rwNVOMCfc2TrusnOCaLQ8i0gjARVAwIs53-9cJ0UHKBQ64z/exec?sheet=15-18 Diciembre Curso IA';
+
+        function fetchData() {
+            const url = DEFAULT_SCRIPT_URL;
+
+            if (!url) {
+                alert("Por favor ingresa la URL de tu Google Apps Script");
+                return;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+
+            fetch(url)
+                .then(response => response.json())
+                .then(json => {
+                    if (json.status === 'success') {
+                        globalData = json.data;
+                        processData(globalData);
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('dashboard').classList.remove('hidden');
+                    } else {
+                        alert("Error en la estructura de datos: " + JSON.stringify(json) + "\n\nAsegúrate de que la pestaña '15-18 Diciembre Curso IA' exista.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error al cargar datos. Verifica la URL y los permisos.");
+                    document.getElementById('loading').classList.add('hidden');
+                });
+        }
+
+        function processData(data) {
+            // --- 1. KPI Calculations ---
+            const totalStudents = data.length;
+
+            // Count unique sellers in "Venta" column
+            const sellers = {};
+            // Count payment methods
+            const paymentMethods = {};
+            let totalScholarships = 0;
+
+            data.forEach(row => {
+                // Vendedores
+                const seller = row['Venta'] || 'Desconocido';
+                if (seller) {
+                    sellers[seller] = (sellers[seller] || 0) + 1;
+                }
+
+                // Métodos de Pago (Normalizar texto)
+                let method = row['Metodo de pago'] || 'Pendiente';
+                method = method.trim(); // Limpieza básica
+
+                // Detectar Beca si está en método o en columna BECA/COSTO
+                const isScholarship = (row['BECA/COSTO'] && row['BECA/COSTO'].toString().toLowerCase().includes('beca')) ||
+                    method.toLowerCase().includes('beca');
+
+                if (isScholarship) {
+                    totalScholarships++;
+                    // Agrupar como 'Beca' en gráfica de pagos
+                    paymentMethods['Beca'] = (paymentMethods['Beca'] || 0) + 1;
+                } else {
+                    paymentMethods[method] = (paymentMethods[method] || 0) + 1;
+                }
+            });
+
+            // Update DOM KPIs
+            document.getElementById('totalStudents').innerText = totalStudents;
+            document.getElementById('totalSellers').innerText = Object.keys(sellers).length;
+            document.getElementById('totalScholarships').innerText = totalScholarships;
+            document.getElementById('totalSalesCount').innerText = totalStudents; // Asumiendo 1 alumno = 1 venta
+
+            // --- 2. Chart Rendering ---
+            renderSellerChart(sellers);
+            renderPaymentChart(paymentMethods);
+
+            // --- 3. Table Populate ---
+            populateTable(data);
+        }
+
+        function renderSellerChart(sellersData) {
+            const ctx = document.getElementById('sellerChart').getContext('2d');
+
+            if (sellerChartInstance) sellerChartInstance.destroy();
+
+            const labels = Object.keys(sellersData);
+            const values = Object.values(sellersData);
+
+            sellerChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ventas',
+                        data: values,
+                        backgroundColor: '#2563eb', // Blue theme for December
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderPaymentChart(paymentData) {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+
+            if (paymentChartInstance) paymentChartInstance.destroy();
+
+            const labels = Object.keys(paymentData);
+            const values = Object.values(paymentData);
+
+            // Colores personalizados para Transferencia, Paypal, Beca...
+            const colors = labels.map(label => {
+                const l = label.toLowerCase();
+                if (l.includes('beca')) return '#10b981'; // Emerald
+                if (l.includes('paypal')) return '#2563eb'; // Blue
+                if (l.includes('transferencia')) return '#f59e0b'; // Amber
+                return '#9ca3af'; // Gray default
+            });
+
+            paymentChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+        }
+
+        function populateTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            // Mostrar todos o limitar a 100 para rendimiento
+            data.slice(0, 100).forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "bg-white border-b hover:bg-gray-50";
+
+                // Mapeo seguro de campos
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${row['No. ALUMNO'] || '-'}</td>
+                    <td class="px-6 py-4">${row['NOMBRE'] || '-'}</td>
+                    <td class="px-6 py-4 text-xs">${row['CORREO'] || '-'}</td>
+                    <td class="px-6 py-4">${row['CIUDAD'] || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">${row['Venta'] || 'N/A'}</span>
+                    </td>
+                    <td class="px-6 py-4">${row['INSCRIPICION'] || '-'}</td>
+                    <td class="px-6 py-4">${row['Metodo de pago'] || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+
+</html>
