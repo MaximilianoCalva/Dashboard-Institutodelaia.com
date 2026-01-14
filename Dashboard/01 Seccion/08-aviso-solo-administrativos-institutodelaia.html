@@ -2,7 +2,10 @@
     <div class="aviso-icon">🔒</div>
     <div class="aviso-content">
         <h3 class="aviso-titulo">Acceso Restringido</h3>
-        <p class="aviso-texto">Este apartado solo está disponible para <strong>Administrativos</strong></p>
+        <p class="aviso-texto">Este apartado solo está disponible para <strong>Administrativos</strong>.</p>
+        <a href="https://panel.institutodelaia.com/administrativo-instituto-de-la-ia/" class="aviso-btn">
+            → Ir al Panel Administrativo
+        </a>
     </div>
     <div class="arrow-down">
         <svg viewBox="0 0 24 24" class="arrow-icon">
@@ -87,6 +90,25 @@
 
     .aviso-texto strong {
         font-weight: 700;
+    }
+
+    .aviso-btn {
+        display: inline-block;
+        background-color: #dc3545;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+    }
+
+    .aviso-btn:hover {
+        background-color: #bb2d3b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
     }
 
     @media (max-width: 768px) {

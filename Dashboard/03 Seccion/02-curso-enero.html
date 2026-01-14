@@ -1,417 +1,57 @@
-<!DOCTYPE html>
-<html lang="es">
+<style>
+    /* --- COMPACT SNIPPET STYLES (Indigo Theme) --- */
+    .compact-course-card.indigo {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>19 AL 23 DE ENERO – IA INTENSIVA</title>
-    <!-- Fuentes Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* --- ESTILOS GENERALES (Tailwind-ish Reset) --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    .compact-course-card.indigo .compact-badge {
+        color: #818cf8;
+        background: rgba(129, 140, 248, 0.1);
+        border-color: rgba(129, 140, 248, 0.2);
+    }
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: transparent;
-            color: #1e293b;
-            line-height: 1.6;
-        }
+    .compact-course-card.indigo .compact-btn {
+        background: #6366f1;
+        color: white;
+    }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0;
-        }
+    .compact-course-card.indigo .compact-btn:hover {
+        background: #4f46e5;
+    }
 
-        /* --- HEADER --- */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+    .compact-course-card.indigo .mini-day-btn:hover {
+        background: rgba(129, 140, 248, 0.1);
+        border-color: #818cf8;
+        color: #818cf8;
+    }
+</style>
 
-        .header h1 {
-            font-size: 2.8em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            line-height: 1.1;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            color: #64748b;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* --- BANNER PRINCIPAL --- */
-        .hero-banner {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            border-radius: 24px;
-            padding: 40px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(30, 27, 75, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        /* Efecto de fondo sutil */
-        .hero-banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(129, 140, 248, 0.15) 0%, transparent 70%);
-            transform: translate(30%, -30%);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            flex: 1;
-            z-index: 1;
-        }
-
-        .hero-tag {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.85em;
-            font-weight: 600;
-            color: #818cf8;
-            margin-bottom: 15px;
-            border: 1px solid rgba(129, 140, 248, 0.2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-title {
-            font-size: 2em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            line-height: 1.2;
-            color: white;
-        }
-
-        .hero-subtitle {
-            font-size: 1.1em;
-            color: #c7d2fe;
-            margin-bottom: 25px;
-            max-width: 600px;
-        }
-
-        .hero-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #6366f1;
-            color: white;
-            font-weight: 700;
-            padding: 14px 28px;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .hero-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
-            background: #4f46e5;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 30px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.8em;
-            font-weight: 800;
-            color: white;
-        }
-
-        .stat-label {
-            font-size: 0.8em;
-            color: #a5b4fc;
-            text-transform: uppercase;
-        }
-
-        /* --- CARDS DE DÍAS (GRID "CUADRITOS") --- */
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .day-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .day-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
-            border-color: #c7d2fe;
-        }
-
-        /* Línea lateral de color */
-        .day-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 6px;
-            background: linear-gradient(to bottom, #6366f1, #4f46e5);
-            border-top-right-radius: 4px;
-            border-bottom-right-radius: 4px;
-        }
-
-        .day-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .day-badge {
-            background: #eef2ff;
-            color: #4f46e5;
-            padding: 12px;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: 1.5em;
-            line-height: 1;
-            min-width: 60px;
-            text-align: center;
-            border: 1px solid #e0e7ff;
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
-        }
-
-        .day-badge span {
-            display: block;
-            font-size: 0.4em;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 2px;
-            color: #818cf8;
-        }
-
-        .day-title {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #1e293b;
-            line-height: 1.2;
-            flex: 1;
-        }
-
-        .locked-content {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #94a3b8;
-            font-size: 0.9em;
-            font-style: italic;
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .hero-banner {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero-stats {
-                justify-content: center;
-            }
-
-            .hero-banner::before {
-                display: none;
-            }
-
-            .day-header {
-                /* flex-direction: column; */
-                /* gap: 10px; */
-            }
-
-            .day-badge {
-                padding: 8px;
-                min-width: 50px;
-                font-size: 1.2em;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container" id="19al23deenero">
-        <div class="header">
-            <h1>19 al 23 de Enero</h1>
-            <p>IA Intensiva - Programa Avanzado</p>
+<div class="compact-course-card indigo">
+    <div class="compact-header">
+        <div class="compact-info">
+            <span class="compact-badge">Nuevo Programa</span>
+            <h2 class="compact-title">19 al 23 de Enero</h2>
+            <p class="compact-subtitle">IA Intensiva - Programa Avanzado. Dominio total de la IA en 5 días.</p>
         </div>
-
-        <!-- Banner de Curso Completo -->
-        <div class="hero-banner">
-            <div class="hero-content">
-                <span class="hero-tag">Nuevo Programa</span>
-                <h2 class="hero-title">Dominio Total de la IA</h2>
-                <p class="hero-subtitle">5 días de inmersión profunda en las tecnologías que definirán el futuro. Acceso
-                    completo y recursos de por vida.</p>
-                <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
-                    class="hero-btn">
-                    <span>Inscribirse al Curso Completo</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                </a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-value">5</div>
-                    <div class="stat-label">Días</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">∞</div>
-                    <div class="stat-label">Acceso</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cards de Días (Placeholder por ahora ya que es contenido futuro) -->
-        <div class="days-grid">
-            <!-- Día 1 -->
-            <div class="day-card">
-                <div class="day-header">
-                    <div class="day-badge">
-                        <span>DÍA</span> 1
-                    </div>
-                    <h3 class="day-title">Fundamentos y Estrategia</h3>
-                </div>
-                <!-- Contenido placeholder -->
-                <div class="locked-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>Contenido disponible al acceder al curso</span>
-                </div>
-            </div>
-
-            <!-- Día 2 -->
-            <div class="day-card">
-                <div class="day-header">
-                    <div class="day-badge">
-                        <span>DÍA</span> 2
-                    </div>
-                    <h3 class="day-title">Modelos LLM Avanzados</h3>
-                </div>
-                <div class="locked-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>Contenido disponible al acceder al curso</span>
-                </div>
-            </div>
-
-            <!-- Día 3 -->
-            <div class="day-card">
-                <div class="day-header">
-                    <div class="day-badge">
-                        <span>DÍA</span> 3
-                    </div>
-                    <h3 class="day-title">Automatización y Flujos</h3>
-                </div>
-                <div class="locked-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>Contenido disponible al acceder al curso</span>
-                </div>
-            </div>
-
-            <!-- Día 4 -->
-            <div class="day-card">
-                <div class="day-header">
-                    <div class="day-badge">
-                        <span>DÍA</span> 4
-                    </div>
-                    <h3 class="day-title">Creación de Agentes</h3>
-                </div>
-                <div class="locked-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>Contenido disponible al acceder al curso</span>
-                </div>
-            </div>
-
-            <!-- Día 5 -->
-            <div class="day-card">
-                <div class="day-header">
-                    <div class="day-badge">
-                        <span>DÍA</span> 5
-                    </div>
-                    <h3 class="day-title">Proyecto Final e Implementación</h3>
-                </div>
-                <div class="locked-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>Contenido disponible al acceder al curso</span>
-                </div>
-            </div>
+        <div class="compact-action">
+            <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+                class="compact-btn">
+                Ir al Curso Completo →
+            </a>
         </div>
     </div>
-</body>
 
-</html>
+    <div class="compact-hub">
+        <span class="hub-label-sm">Navegación Rápida:</span>
+        <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+            class="mini-day-btn" title="Día 1">1</a>
+        <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+            class="mini-day-btn" title="Día 2">2</a>
+        <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+            class="mini-day-btn" title="Día 3">3</a>
+        <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+            class="mini-day-btn" title="Día 4">4</a>
+        <a href="https://panel.institutodelaia.com/courses/19-al-23-de-enero-ia-intensiva/" target="_blank"
+            class="mini-day-btn" title="Final">5</a>
+    </div>
+</div>

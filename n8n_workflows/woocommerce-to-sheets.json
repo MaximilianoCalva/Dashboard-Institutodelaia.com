@@ -1,0 +1,275 @@
+{
+    "name": "WooCommerce API to Google Sheets (V13 - Explicit Refs)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 1
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-trigger",
+            "name": "Schedule",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "order",
+                "operation": "getAll",
+                "limit": 50,
+                "options": {}
+            },
+            "id": "woocommerce-api",
+            "name": "WooCommerce API",
+            "type": "n8n-nodes-base.wooCommerce",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ],
+            "credentials": {
+                "wooCommerceApi": {
+                    "id": "CREATE_NEW_CREDENTIAL_IN_N8N",
+                    "name": "Instituto de la IA Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "sheetId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "range": "A:A",
+                "options": {}
+            },
+            "id": "read-existing",
+            "name": "Read Existing IDs",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                450,
+                500
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleSheetsOAuth2Api": "Google Sheets Account"
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Explicit Node Reference V13\n// Instead of guessing inputs, we ask for them by name.\n// This prevents \"Self-Duplication\" errors.\n\nlet newOrders = [];\nlet existingData = [];\n\ntry {\n  newOrders = $('WooCommerce API').all();\n} catch(e) {\n  // If run individually, might fail. Fallback to input.all()\n  newOrders = $input.all(); \n}\n\ntry {\n  existingData = $('Read Existing IDs').all();\n} catch(e) {\n  existingData = [];\n}\n\n// 1. Build ID Set from SHEET DATA only\nconst existingIds = new Set();\nexistingData.forEach(item => {\n  const val = item.json.id || item.json.ID || item.json.Id || item.json.values; \n  if (val) existingIds.add(String(val));\n});\n\nconst debugIdsObj = Array.from(existingIds).slice(0, 10).join(', ') + (existingIds.size > 10 ? '...' : '');\n\n// 2. MARK Duplicates\n// We verify newOrders against existingIds\nreturn newOrders.map(item => {\n  const id = item.json.id;\n  item.json._debug_sheet_ids_found = debugIdsObj; // DEBUG INFO\n  \n  // Safety: If existingIds is empty, nothing is duplicate.\n  // Safety: Ensure we aren't comparing the order to itself if inputs got mixed.\n  \n  if (id && existingIds.has(String(id))) {\n     item.json._isDuplicate = true;\n     item.json._processingStatus = \"Duplicate - Skipped\";\n  } else {\n     item.json._isDuplicate = false;\n     item.json._processingStatus = \"New - Processing\";\n  }\n  return item;\n});"
+            },
+            "id": "mark-duplicates",
+            "name": "Check Duplicates (Code)",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json._isDuplicate }}",
+                            "value2": false
+                        }
+                    ]
+                }
+            },
+            "id": "if-new",
+            "name": "If New Order",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "name": "id",
+                            "value": "={{$json[\"id\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "status",
+                            "value": "={{$json[\"status\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "product_name",
+                            "value": "={{ ($json.line_items || []).map(i => i.name).join(', ') }}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "date_created",
+                            "value": "={{$json[\"date_created\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "total",
+                            "value": "={{$json[\"total\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "currency",
+                            "value": "={{$json[\"currency\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "payment_method",
+                            "value": "={{$json[\"payment_method_title\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "first_name",
+                            "value": "={{$json[\"billing\"][\"first_name\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "last_name",
+                            "value": "={{$json[\"billing\"][\"last_name\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "email",
+                            "value": "={{$json[\"billing\"][\"email\"]}}",
+                            "type": "string"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "={{$json[\"billing\"][\"phone\"]}}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "format-data",
+            "name": "Format Data",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                1100,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "sheetId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "range": "A:K",
+                "options": {}
+            },
+            "id": "google-sheets-write",
+            "name": "Google Sheets (Write)",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                1300,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": "Google Sheets Account"
+            },
+            "notes": "REQUIRES HEADERS: id | status | product_name | date_created | total | ..."
+        }
+    ],
+    "connections": {
+        "Schedule": {
+            "main": [
+                [
+                    {
+                        "node": "WooCommerce API",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Read Existing IDs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "WooCommerce API": {
+            "main": [
+                [
+                    {
+                        "node": "Check Duplicates (Code)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read Existing IDs": {
+            "main": [
+                [
+                    {
+                        "node": "Check Duplicates (Code)",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Check Duplicates (Code)": {
+            "main": [
+                [
+                    {
+                        "node": "If New Order",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "If New Order": {
+            "main": [
+                [
+                    {
+                        "node": "Format Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Data": {
+            "main": [
+                [
+                    {
+                        "node": "Google Sheets (Write)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
