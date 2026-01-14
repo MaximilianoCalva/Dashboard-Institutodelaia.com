@@ -383,6 +383,13 @@
                     tr.className = "bg-white border-b hover:bg-gray-50";
 
                     // Mapeo seguro de campos
+                    // Status Logic
+                    const status = row['Status'] || row['status'] || row['Estatus'] || 'Desconocido';
+                    let statusColor = "bg-gray-100 text-gray-800";
+                    if (status.toLowerCase().includes('activo') || status.toLowerCase() === 'pagado') statusColor = "bg-green-100 text-green-800";
+                    if (status.toLowerCase().includes('baja') || status.toLowerCase().includes('cancelado')) statusColor = "bg-red-100 text-red-800";
+                    if (status.toLowerCase().includes('pendiente')) statusColor = "bg-yellow-100 text-yellow-800";
+
                     tr.innerHTML = `
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${row['No. ALUMNO'] || '-'}</td>
                     <td class="px-6 py-4">

@@ -1,13 +1,13 @@
 {
-    "name": "WooCommerce API to Google Sheets (V13 - Explicit Refs)",
+    "name": "WooCommerce API to Google Sheets (V24 - Ingestion Only)",
     "nodes": [
         {
             "parameters": {
                 "rule": {
                     "interval": [
                         {
-                            "field": "hours",
-                            "hoursInterval": 1
+                            "field": "minutes",
+                            "minutesInterval": 15
                         }
                     ]
                 }
@@ -17,15 +17,15 @@
             "type": "n8n-nodes-base.scheduleTrigger",
             "typeVersion": 1.1,
             "position": [
-                250,
-                300
+                220,
+                240
             ]
         },
         {
             "parameters": {
                 "resource": "order",
                 "operation": "getAll",
-                "limit": 50,
+                "limit": 20,
                 "options": {}
             },
             "id": "woocommerce-api",
@@ -33,8 +33,8 @@
             "type": "n8n-nodes-base.wooCommerce",
             "typeVersion": 1,
             "position": [
-                450,
-                300
+                440,
+                240
             ],
             "credentials": {
                 "wooCommerceApi": {
@@ -45,120 +45,78 @@
         },
         {
             "parameters": {
-                "operation": "read",
-                "sheetId": {
-                    "__rl": true,
-                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
-                    "mode": "list",
-                    "cachedResultName": "Select Spreadsheet"
-                },
-                "range": "A:A",
-                "options": {}
+                "jsCode": "// Robust Batch Deduplication\n// Keeps the first occurrence of each unique ID\nconst items = $input.all();\nconst seen = new Set();\nconst uniqueItems = [];\n\nfor (const item of items) {\n  const id = item.json.id;\n  if (id && !seen.has(id)) {\n    seen.add(id);\n    uniqueItems.push(item);\n  }\n}\n\nreturn uniqueItems;"
             },
-            "id": "read-existing",
-            "name": "Read Existing IDs",
-            "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4.5,
-            "position": [
-                450,
-                500
-            ],
-            "alwaysOutputData": true,
-            "credentials": {
-                "googleSheetsOAuth2Api": "Google Sheets Account"
-            }
-        },
-        {
-            "parameters": {
-                "jsCode": "// Explicit Node Reference V13\n// Instead of guessing inputs, we ask for them by name.\n// This prevents \"Self-Duplication\" errors.\n\nlet newOrders = [];\nlet existingData = [];\n\ntry {\n  newOrders = $('WooCommerce API').all();\n} catch(e) {\n  // If run individually, might fail. Fallback to input.all()\n  newOrders = $input.all(); \n}\n\ntry {\n  existingData = $('Read Existing IDs').all();\n} catch(e) {\n  existingData = [];\n}\n\n// 1. Build ID Set from SHEET DATA only\nconst existingIds = new Set();\nexistingData.forEach(item => {\n  const val = item.json.id || item.json.ID || item.json.Id || item.json.values; \n  if (val) existingIds.add(String(val));\n});\n\nconst debugIdsObj = Array.from(existingIds).slice(0, 10).join(', ') + (existingIds.size > 10 ? '...' : '');\n\n// 2. MARK Duplicates\n// We verify newOrders against existingIds\nreturn newOrders.map(item => {\n  const id = item.json.id;\n  item.json._debug_sheet_ids_found = debugIdsObj; // DEBUG INFO\n  \n  // Safety: If existingIds is empty, nothing is duplicate.\n  // Safety: Ensure we aren't comparing the order to itself if inputs got mixed.\n  \n  if (id && existingIds.has(String(id))) {\n     item.json._isDuplicate = true;\n     item.json._processingStatus = \"Duplicate - Skipped\";\n  } else {\n     item.json._isDuplicate = false;\n     item.json._processingStatus = \"New - Processing\";\n  }\n  return item;\n});"
-            },
-            "id": "mark-duplicates",
-            "name": "Check Duplicates (Code)",
+            "id": "filter-batch-duplicates",
+            "name": "Safety Filter (Batch)",
             "type": "n8n-nodes-base.code",
             "typeVersion": 2,
             "position": [
-                700,
-                300
+                660,
+                240
             ]
         },
         {
             "parameters": {
-                "conditions": {
-                    "boolean": [
-                        {
-                            "value1": "={{ $json._isDuplicate }}",
-                            "value2": false
-                        }
-                    ]
-                }
+                "jsCode": "// Simple reliable text extraction\nconst items = $input.all();\nreturn items.map(item => {\n  const lineItems = (item.json.line_items || []);\n  // Join all product names\n  const names = lineItems.map(i => i.name).join(', ');\n  return {\n    json: {\n      product_name: names || \"Producto General\"\n    }\n  }\n});"
             },
-            "id": "if-new",
-            "name": "If New Order",
-            "type": "n8n-nodes-base.if",
-            "typeVersion": 1,
+            "id": "code-product-cleaner",
+            "name": "Product Name Cleaner",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
             "position": [
                 900,
-                300
+                240
             ]
         },
         {
             "parameters": {
-                "assignments": {
-                    "assignments": [
+                "keepOnlySet": true,
+                "values": {
+                    "string": [
                         {
                             "name": "id",
-                            "value": "={{$json[\"id\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"id\"] }}"
                         },
                         {
                             "name": "status",
-                            "value": "={{$json[\"status\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"status\"] }}"
                         },
                         {
                             "name": "product_name",
-                            "value": "={{ ($json.line_items || []).map(i => i.name).join(', ') }}",
-                            "type": "string"
+                            "value": "={{ $json.product_name }}"
                         },
                         {
                             "name": "date_created",
-                            "value": "={{$json[\"date_created\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"date_created\"] }}"
                         },
                         {
                             "name": "total",
-                            "value": "={{$json[\"total\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"total\"] }}"
                         },
                         {
                             "name": "currency",
-                            "value": "={{$json[\"currency\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"currency\"] }}"
                         },
                         {
                             "name": "payment_method",
-                            "value": "={{$json[\"payment_method_title\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_method_title\"] }}"
                         },
                         {
                             "name": "first_name",
-                            "value": "={{$json[\"billing\"][\"first_name\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"billing\"]?.[\"first_name\"] || '' }}"
                         },
                         {
                             "name": "last_name",
-                            "value": "={{$json[\"billing\"][\"last_name\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"billing\"]?.[\"last_name\"] || '' }}"
                         },
                         {
                             "name": "email",
-                            "value": "={{$json[\"billing\"][\"email\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"billing\"]?.[\"email\"] || '' }}"
                         },
                         {
                             "name": "phone",
-                            "value": "={{$json[\"billing\"][\"phone\"]}}",
-                            "type": "string"
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"billing\"]?.[\"phone\"] || '' }}"
                         }
                     ]
                 },
@@ -167,10 +125,10 @@
             "id": "format-data",
             "name": "Format Data",
             "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
+            "typeVersion": 2,
             "position": [
-                1100,
-                300
+                1140,
+                240
             ]
         },
         {
@@ -188,10 +146,10 @@
             "id": "google-sheets-write",
             "name": "Google Sheets (Write)",
             "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4.5,
+            "typeVersion": 4,
             "position": [
-                1300,
-                300
+                1380,
+                240
             ],
             "credentials": {
                 "googleSheetsOAuth2Api": "Google Sheets Account"
@@ -207,11 +165,6 @@
                         "node": "WooCommerce API",
                         "type": "main",
                         "index": 0
-                    },
-                    {
-                        "node": "Read Existing IDs",
-                        "type": "main",
-                        "index": 0
                     }
                 ]
             ]
@@ -220,36 +173,25 @@
             "main": [
                 [
                     {
-                        "node": "Check Duplicates (Code)",
+                        "node": "Safety Filter (Batch)",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Read Existing IDs": {
+        "Safety Filter (Batch)": {
             "main": [
                 [
                     {
-                        "node": "Check Duplicates (Code)",
-                        "type": "main",
-                        "index": 1
-                    }
-                ]
-            ]
-        },
-        "Check Duplicates (Code)": {
-            "main": [
-                [
-                    {
-                        "node": "If New Order",
+                        "node": "Product Name Cleaner",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "If New Order": {
+        "Product Name Cleaner": {
             "main": [
                 [
                     {

@@ -1,0 +1,292 @@
+{
+    "name": "Stripe API to Google Sheets (V26 - HTTP Fallback)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 1
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-trigger",
+            "name": "Schedule",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                220,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "https://api.stripe.com/v1/checkout/sessions",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "stripeApi",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "limit",
+                            "value": "50"
+                        },
+                        {
+                            "name": "expand[]",
+                            "value": "data.payment_intent.latest_charge.balance_transaction"
+                        },
+                        {
+                            "name": "expand[]",
+                            "value": "data.customer"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "stripe-http-request",
+            "name": "Stripe API (HTTP)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                440,
+                240
+            ],
+            "credentials": {
+                "stripeApi": {
+                    "id": "CREATE_NEW_CREDENTIAL_IN_N8N",
+                    "name": "Stripe Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "data",
+                "options": {}
+            },
+            "id": "split-data",
+            "name": "Split Batches",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 2,
+            "position": [
+                660,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Robust Batch Deduplication\n// Keeps the first occurrence of each unique ID\nconst items = $input.all();\nconst seen = new Set();\nconst uniqueItems = [];\n\nfor (const item of items) {\n  const id = item.json.id;\n  if (id && !seen.has(id)) {\n    seen.add(id);\n    uniqueItems.push(item);\n  }\n}\n\nreturn uniqueItems;"
+            },
+            "id": "filter-batch-duplicates",
+            "name": "Safety Filter (Batch)",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                880,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract Product Name from Checkout Session Line Items\nconst items = $input.all();\nreturn items.map(item => {\n  const lineItems = item.json.line_items?.data || [];\n  // Combine all descriptions (e.g. \"Curso A, Ebook B\")\n  const names = lineItems.map(i => i.description).join(', ');\n  return {\n    json: {\n      product_name: names || \"Pago Checkout General\"\n    }\n  }\n});"
+            },
+            "id": "code-product-cleaner",
+            "name": "Product Name Cleaner",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1100,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "keepOnlySet": true,
+                "values": {
+                    "string": [
+                        {
+                            "name": "Created date (UTC)",
+                            "value": "={{ DateTime.fromSeconds($('Safety Filter (Batch)').item.json[\"created\"]).toUTC().toFormat('yyyy-MM-dd HH:mm:ss') }}"
+                        },
+                        {
+                            "name": "Amount",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"amount_total\"] / 100 }}"
+                        },
+                        {
+                            "name": "Currency",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"currency\"] }}"
+                        },
+                        {
+                            "name": "Captured",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_status\"] === 'paid' ? 'true' : 'false' }}"
+                        },
+                        {
+                            "name": "Converted Amount",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"amount_total\"] / 100 }}"
+                        },
+                        {
+                            "name": "Converted Currency",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"currency\"] }}"
+                        },
+                        {
+                            "name": "Decline Reason",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"last_payment_error\"]?.[\"message\"] || '' }}"
+                        },
+                        {
+                            "name": "PaymentIntent ID",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"id\"] || '' }}"
+                        },
+                        {
+                            "name": "Payment Source Type",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"payment_method\"]?.[\"type\"] || $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"payment_method_types\"]?.[0] || 'card' }}"
+                        },
+                        {
+                            "name": "Seller Message",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_status\"] }}"
+                        },
+                        {
+                            "name": "Card Name",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"customer_details\"]?.[\"name\"] || '' }}"
+                        },
+                        {
+                            "name": "Card Brand",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"payment_method\"]?.[\"card\"]?.[\"brand\"] || '' }}"
+                        },
+                        {
+                            "name": "Customer Email",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"customer_details\"]?.[\"email\"] || $('Safety Filter (Batch)').item.json[\"customer_email\"] || $('Safety Filter (Batch)').item.json[\"customer\"]?.[\"email\"] || '' }}"
+                        },
+                        {
+                            "name": "Checkout Line Item Summary",
+                            "value": "={{ $json.product_name }}"
+                        },
+                        {
+                            "name": "Stripe Fee",
+                            "value": "={{ ($('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"latest_charge\"]?.[\"balance_transaction\"]?.[\"fee\"] || 0) / 100 }}"
+                        },
+                        {
+                            "name": "Net Amount",
+                            "value": "={{ ($('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"latest_charge\"]?.[\"balance_transaction\"]?.[\"net\"] || 0) / 100 }}"
+                        },
+                        {
+                            "name": "Exchange Rate",
+                            "value": "={{ $('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"latest_charge\"]?.[\"balance_transaction\"]?.[\"exchange_rate\"] || 1 }}"
+                        },
+                        {
+                            "name": "Payout Date",
+                            "value": "={{ DateTime.fromSeconds($('Safety Filter (Batch)').item.json[\"payment_intent\"]?.[\"latest_charge\"]?.[\"balance_transaction\"]?.[\"available_on\"] || 0).toFormat('yyyy-MM-dd') }}"
+                        },
+                        {
+                            "name": "Raw Data",
+                            "value": "={{ JSON.stringify($('Safety Filter (Batch)').item.json) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "format-data",
+            "name": "Format Data",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "sheetId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "range": "A:S",
+                "options": {}
+            },
+            "id": "google-sheets-write",
+            "name": "Google Sheets (Write)",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1560,
+                240
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": "Google Sheets Account"
+            },
+            "notes": "COLUMNS: Created | Amount | Currency | Captured | ... | Email | Summary | Fee | Net | Rate | Payout | Raw Data"
+        }
+    ],
+    "connections": {
+        "Schedule": {
+            "main": [
+                [
+                    {
+                        "node": "Stripe API (HTTP)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Stripe API (HTTP)": {
+            "main": [
+                [
+                    {
+                        "node": "Split Batches",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Batches": {
+            "main": [
+                [
+                    {
+                        "node": "Safety Filter (Batch)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Safety Filter (Batch)": {
+            "main": [
+                [
+                    {
+                        "node": "Product Name Cleaner",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Product Name Cleaner": {
+            "main": [
+                [
+                    {
+                        "node": "Format Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Data": {
+            "main": [
+                [
+                    {
+                        "node": "Google Sheets (Write)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

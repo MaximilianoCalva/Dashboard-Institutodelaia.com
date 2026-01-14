@@ -1,0 +1,138 @@
+{
+    "name": "Auto-Clean Sheet Duplicates (Janitor)",
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "documentId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "gid=0",
+                    "mode": "list",
+                    "cachedResultName": "Hoja 1"
+                },
+                "event": "change"
+            },
+            "id": "sheet-trigger",
+            "name": "Google Sheets Trigger",
+            "type": "n8n-nodes-base.googleSheetsTrigger",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ],
+            "credentials": {
+                "googleSheetsTriggerOAuth2Api": {
+                    "id": "CREATE_NEW_CREDENTIAL_IN_N8N",
+                    "name": "Google Sheets Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "sheetId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "range": "A:A",
+                "options": {}
+            },
+            "id": "read-all",
+            "name": "Read Full Sheet",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": "Google Sheets Account"
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Smart Deduplication (Bottom-Up)\n// Finds duplicates and reports them highest-row-number first.\n\nconst allRows = $input.all();\nconst seenIds = new Set();\nconst rowsToDelete = [];\n\nallRows.forEach((item, index) => {\n  // 1. Find the ID\n  // Priority: 'id' key > First key that isn't 'row_number'\n  let val = item.json[\"id\"];\n  if (val === undefined) {\n      const keys = Object.keys(item.json).filter(k => k !== \"row_number\");\n      val = keys.length > 0 ? item.json[keys[0]] : null;\n  }\n  \n  const id = val ? String(val).trim() : null;\n  \n  // 2. Get Row Number (Use source truth if available)\n  const rowNum = item.json[\"row_number\"] || (index + 2);\n\n  if (!id) return;\n\n  if (seenIds.has(id)) {\n    // It's a duplicate! Mark for death.\n    rowsToDelete.push({\n      json: {\n        rowNumber: rowNum,\n        id: id,\n        _reason: \"Duplicate ID\"\n      }\n    });\n  } else {\n    // It's the first time we see this ID. Keep it.\n    seenIds.add(id);\n  }\n});\n\n// 3. Sort Descending (CRITICAL)\n// Delete Row 100 before Row 10.\nrowsToDelete.sort((a, b) => b.json.rowNumber - a.json.rowNumber);\n\nreturn rowsToDelete;"
+            },
+            "id": "find-duplicates",
+            "name": "Identify Duplicates",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "delete",
+                "sheetId": {
+                    "__rl": true,
+                    "value": "1V36sRqibKoduR078ovbz5SaY3SUXy3b0kdAEM66X-Yg",
+                    "mode": "list",
+                    "cachedResultName": "Select Spreadsheet"
+                },
+                "range": "={{ $json.rowNumber }}:={{ $json.rowNumber }}"
+            },
+            "id": "delete-rows",
+            "name": "Delete Duplicate Rows",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                900,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": "Google Sheets Account"
+            }
+        }
+    ],
+    "connections": {
+        "Google Sheets Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Read Full Sheet",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read Full Sheet": {
+            "main": [
+                [
+                    {
+                        "node": "Identify Duplicates",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Identify Duplicates": {
+            "main": [
+                [
+                    {
+                        "node": "Delete Duplicate Rows",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
