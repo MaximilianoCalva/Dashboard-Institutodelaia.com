@@ -1,0 +1,414 @@
+<!-- Woocommerce Dashboard Snippet -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Scoped Container to prevent leaking styles */
+    .pay-dash-snippet {
+        --pd-primary: #6366f1;
+        --pd-bg-dark: #0f172a;
+        --pd-surface-dark: #1e293b;
+        --pd-text-light: #f8fafc;
+        --pd-text-dim: #94a3b8;
+        --pd-success: #10b981;
+        --pd-glass: rgba(30, 41, 59, 0.7);
+
+        font-family: 'Outfit', sans-serif;
+        color: var(--pd-text-light);
+        background-color: var(--pd-bg-dark);
+        /* Optional: remove if transparent background is desired */
+        padding: 2rem;
+        border-radius: 1rem;
+        /* Added for nicer embed look */
+    }
+
+    .pay-dash-snippet * {
+        box-sizing: border-box;
+    }
+
+    .pay-dash-snippet .glass-panel {
+        background: var(--pd-glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .pay-dash-snippet .grid-4 {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet .grid-2 {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(to right, #fff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+    }
+
+    .pay-dash-snippet h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--pd-text-light);
+        line-height: 1.2;
+    }
+
+    .pay-dash-snippet .kpi-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pay-dash-snippet .kpi-label {
+        font-size: 0.875rem;
+        color: var(--pd-text-dim);
+        text-transform: uppercase;
+    }
+
+    .pay-dash-snippet .kpi-value {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .pay-dash-snippet .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Table Styles */
+    .pay-dash-snippet .table-container {
+        overflow-x: auto;
+    }
+
+    .pay-dash-snippet table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .pay-dash-snippet th,
+    .pay-dash-snippet td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .pay-dash-snippet th {
+        color: var(--pd-text-dim);
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .pay-dash-snippet tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Button Styles */
+    .pay-dash-snippet .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet h1 {
+        margin-bottom: 0;
+    }
+
+    .pay-dash-btn {
+        background: var(--pd-primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 500;
+        transition: opacity 0.2s;
+    }
+
+    .pay-dash-btn:hover {
+        opacity: 0.9;
+    }
+
+    /* Loading Spinner Scoped */
+    .pay-dash-snippet .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4rem;
+    }
+
+    .pay-dash-snippet .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--pd-surface-dark);
+        border-top-color: var(--pd-primary);
+        border-radius: 50%;
+        animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="pay-dash-snippet">
+
+    <div id="loading-woo" class="loading-container">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Content Wrapper (hidden until loaded) -->
+    <div id="content-woo" style="display: none;">
+
+        <div class="header-actions">
+            <h1>Dashboard Woocommerce</h1>
+            <button class="pay-dash-btn" onclick="exportWooCsv()">Descargar CSV</button>
+        </div>
+
+        <div class="grid-4">
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Ventas Totales</span>
+                <span class="kpi-value" id="woo-kpi-total">$0.00</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Pedidos</span>
+                <span class="kpi-value" id="woo-kpi-orders">0</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Completados</span>
+                <span class="kpi-value" id="woo-kpi-completed" style="color: var(--pd-success)">0</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Ticket Promedio</span>
+                <span class="kpi-value" id="woo-kpi-avg">$0.00</span>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="glass-panel">
+                <h2>Estado de Pedidos</h2>
+                <div class="chart-container"><canvas id="wooStatusChart"></canvas></div>
+            </div>
+            <div class="glass-panel">
+                <h2>Métodos de Pago</h2>
+                <div class="chart-container"><canvas id="wooPaymentChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Historial de Ventas</h2>
+            <div class="chart-container"><canvas id="wooHistoryChart"></canvas></div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="glass-panel">
+            <h2>Últimos Pagos Confirmados</h2>
+            <div class="table-container">
+                <table id="wooTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wooTableBody">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Global scope variable for CSV export access
+    let wooGlobalData = [];
+
+    function exportWooCsv() {
+        if (!wooGlobalData || !wooGlobalData.length) return;
+
+        const headers = Object.keys(wooGlobalData[0]);
+        const csvContent = [
+            headers.join(','),
+            ...wooGlobalData.map(row => headers.map(fieldName => {
+                let val = row[fieldName] || '';
+                // Escape quotes and commas
+                if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+                    val = `"${val.replace(/"/g, '""')}"`;
+                }
+                return val;
+            }).join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `pagos_woocommerce_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+    }
+
+    (function () {
+        // Scoped Execution
+        const API_URL = 'https://script.google.com/macros/s/AKfycbz11PFCeYv8Lhn74-GEhXgYt1vBvoKfvfo6PJEtWY4TvqHjFb5Ly0OhOfNTRp4It8KO/exec';
+
+        async function loadWooData() {
+            try {
+                // Fetch Data
+                const response = await fetch(`${API_URL}?sheet=Woocommerce`);
+                const json = await response.json();
+
+                let data = [];
+                if (json.status === 'success') {
+                    data = json.data;
+                } else {
+                    console.error("Error API:", json.message);
+                    return; // Fail silently or show error in UI
+                }
+
+                // FILTER: Removed strict filtering per user request to see ALL data.
+                // We will pass essentially all data, or logic to handle displaying everything.
+                // const confirmedData = data.filter(r => ...);
+
+                wooGlobalData = data; // Store ALL data for export
+                renderWooData(data); // Render ALL data
+
+            } catch (e) {
+                console.error("Error fetching data:", e);
+            }
+        }
+
+        function renderWooData(data) {
+            document.getElementById('loading-woo').style.display = 'none';
+            document.getElementById('content-woo').style.display = 'block';
+
+            if (!data || data.length === 0) return;
+
+            // Calculations
+            const total = data.reduce((acc, r) => acc + (parseFloat(r.total) || 0), 0);
+            const completed = data.filter(r => r.status === 'completed').length;
+            const avg = data.length ? total / data.length : 0;
+
+            // Update DOM with scoped IDs
+            document.getElementById('woo-kpi-total').innerText = formatCurrency(total);
+            document.getElementById('woo-kpi-orders').innerText = data.length;
+            document.getElementById('woo-kpi-completed').innerText = completed;
+            document.getElementById('woo-kpi-avg').innerText = formatCurrency(avg);
+
+            // Table Render (Limit to last 50 for performance if large)
+            const tableBody = document.getElementById('wooTableBody');
+            tableBody.innerHTML = '';
+            // Sort by date desc
+            const sortedData = [...data].sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
+
+            sortedData.forEach(r => {
+                const tr = document.createElement('tr');
+                const date = r.date_created ? new Date(r.date_created).toLocaleDateString() : '';
+                const name = `${r.first_name || ''} ${r.last_name || ''}`.trim() || r.email || 'N/A';
+
+                tr.innerHTML = `
+                    <td>#${r.id}</td>
+                    <td>${date}</td>
+                    <td><span style="color: ${r.status === 'completed' ? 'var(--pd-success)' : '#f59e0b'}">${r.status}</span></td>
+                    <td>${name}</td>
+                    <td>${formatCurrency(r.total)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Chart Process
+            const statusCounts = {};
+            const paymentCounts = {};
+            const timeline = {};
+
+            data.forEach(r => {
+                const status = r.status || 'unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+
+                const method = r.payment_method || 'unknown';
+                paymentCounts[method] = (paymentCounts[method] || 0) + 1;
+
+                const d = new Date(r.date_created);
+                if (!isNaN(d)) {
+                    const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    timeline[k] = (timeline[k] || 0) + (parseFloat(r.total) || 0);
+                }
+            });
+
+            // Initialize Charts
+            // Use unique IDs for canvases
+            new Chart(document.getElementById('wooStatusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } } }
+            });
+
+            new Chart(document.getElementById('wooPaymentChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(paymentCounts),
+                    datasets: [{
+                        label: 'Pedidos',
+                        data: Object.values(paymentCounts),
+                        backgroundColor: '#6366f1',
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#94a3b8' }, grid: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+
+            const sortedDates = Object.keys(timeline).sort();
+            new Chart(document.getElementById('wooHistoryChart'), {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'Ventas',
+                        data: sortedDates.map(k => timeline[k]),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#94a3b8' }, grid: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
+        }
+
+        loadWooData();
+    })();
+</script>

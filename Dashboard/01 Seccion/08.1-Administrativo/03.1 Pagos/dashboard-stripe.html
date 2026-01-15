@@ -1,0 +1,412 @@
+<!-- Stripe Dashboard Snippet -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Scoped Container to prevent leaking styles */
+    .pay-dash-snippet-stripe {
+        --pd-primary: #6366f1;
+        --pd-secondary: #ec4899;
+        --pd-bg-dark: #0f172a;
+        --pd-surface-dark: #1e293b;
+        --pd-text-light: #f8fafc;
+        --pd-text-dim: #94a3b8;
+        --pd-danger: #ef4444;
+        --pd-glass: rgba(30, 41, 59, 0.7);
+
+        font-family: 'Outfit', sans-serif;
+        color: var(--pd-text-light);
+        background-color: var(--pd-bg-dark);
+        padding: 2rem;
+        border-radius: 1rem;
+    }
+
+    .pay-dash-snippet-stripe * {
+        box-sizing: border-box;
+    }
+
+    .pay-dash-snippet-stripe .glass-panel {
+        background: var(--pd-glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .pay-dash-snippet-stripe .grid-4 {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet-stripe .grid-2 {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet-stripe h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(to right, #ec4899, #f8fafc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+    }
+
+    .pay-dash-snippet-stripe h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--pd-text-light);
+        line-height: 1.2;
+    }
+
+    .pay-dash-snippet-stripe .kpi-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pay-dash-snippet-stripe .kpi-label {
+        font-size: 0.875rem;
+        color: var(--pd-text-dim);
+        text-transform: uppercase;
+    }
+
+    .pay-dash-snippet-stripe .kpi-value {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .pay-dash-snippet-stripe .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Table Styles */
+    .pay-dash-snippet-stripe .table-container {
+        overflow-x: auto;
+    }
+
+    .pay-dash-snippet-stripe table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .pay-dash-snippet-stripe th,
+    .pay-dash-snippet-stripe td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .pay-dash-snippet-stripe th {
+        color: var(--pd-text-dim);
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .pay-dash-snippet-stripe tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Button Styles */
+    .pay-dash-snippet-stripe .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .pay-dash-snippet-stripe h1 {
+        margin-bottom: 0;
+    }
+
+    .pay-dash-btn {
+        background: var(--pd-primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 500;
+        transition: opacity 0.2s;
+    }
+
+    .pay-dash-btn:hover {
+        opacity: 0.9;
+    }
+
+    .pay-dash-snippet-stripe .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4rem;
+    }
+
+    .pay-dash-snippet-stripe .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--pd-surface-dark);
+        border-top-color: var(--pd-secondary);
+        border-radius: 50%;
+        animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="pay-dash-snippet-stripe">
+
+    <div id="loading-stripe" class="loading-container">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div id="content-stripe" style="display: none;">
+
+        <div class="header-actions">
+            <h1>Finanzas Stripe</h1>
+            <button class="pay-dash-btn" onclick="exportStripeCsv()">Descargar CSV</button>
+        </div>
+
+        <div class="grid-4">
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Volumen Bruto</span>
+                <span class="kpi-value" id="stripe-kpi-gross">$0.00</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Neto Recibido</span>
+                <span class="kpi-value" id="stripe-kpi-net">$0.00</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Comisiones</span>
+                <span class="kpi-value" id="stripe-kpi-fees" style="color: var(--pd-danger)">$0.00</span>
+            </div>
+            <div class="glass-panel kpi-card">
+                <span class="kpi-label">Transacciones</span>
+                <span class="kpi-value" id="stripe-kpi-tx">0</span>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="glass-panel">
+                <h2>Ingresos vs Comisiones</h2>
+                <div class="chart-container"><canvas id="stripeNetFeeChart"></canvas></div>
+            </div>
+            <div class="glass-panel">
+                <h2>Motivos de Rechazo</h2>
+                <div class="chart-container"><canvas id="stripeDeclineChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Distribución por Divisa</h2>
+            <div class="chart-container"><canvas id="stripeCurrencyChart"></canvas></div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="glass-panel">
+            <h2>Últimos Pagos Confirmados</h2>
+            <div class="table-container">
+                <table id="stripeTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha (UTC)</th>
+                            <th>Monto</th>
+                            <th>Neto</th>
+                            <th>Comisión</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stripeTableBody">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Global var for CSV export
+    let stripeGlobalData = [];
+
+    function exportStripeCsv() {
+        if (!stripeGlobalData || !stripeGlobalData.length) return;
+
+        const headers = Object.keys(stripeGlobalData[0]);
+        const csvContent = [
+            headers.join(','),
+            ...stripeGlobalData.map(row => headers.map(fieldName => {
+                let val = row[fieldName] || '';
+                if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+                    val = `"${val.replace(/"/g, '""')}"`;
+                }
+                return val;
+            }).join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `finanzas_stripe_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+    }
+
+    (function () {
+        // Scoped Execution
+        const API_URL = 'https://script.google.com/macros/s/AKfycbz11PFCeYv8Lhn74-GEhXgYt1vBvoKfvfo6PJEtWY4TvqHjFb5Ly0OhOfNTRp4It8KO/exec';
+
+        async function loadStripeData() {
+            try {
+                const response = await fetch(`${API_URL}?sheet=Stripe`);
+                const json = await response.json();
+
+                let data = [];
+                if (json.status === 'success') {
+                    data = json.data;
+                } else {
+                    console.error("Error API:", json.message);
+                    return;
+                }
+
+                // FILTER: Removed strict filtering per user request to see ALL data.
+                // Passing all data to render function.
+
+                stripeGlobalData = data;
+                renderStripeData(data);
+
+            } catch (e) {
+                console.error("Error fetching data:", e);
+            }
+        }
+
+        function renderStripeData(data) {
+            document.getElementById('loading-stripe').style.display = 'none';
+            document.getElementById('content-stripe').style.display = 'block';
+
+            if (!data || data.length === 0) return;
+
+            // KPIs
+            const gross = data.reduce((acc, r) => acc + (parseFloat(r['Amount']) || 0), 0);
+            const net = data.reduce((acc, r) => acc + (parseFloat(r['Net Amount']) || 0), 0);
+            const fees = data.reduce((acc, r) => acc + (parseFloat(r['Stripe Fee']) || 0), 0);
+
+            // Update DOM
+            document.getElementById('stripe-kpi-gross').innerText = formatCurrency(gross);
+            document.getElementById('stripe-kpi-net').innerText = formatCurrency(net);
+            document.getElementById('stripe-kpi-fees').innerText = formatCurrency(fees);
+            document.getElementById('stripe-kpi-tx').innerText = data.length;
+
+            // Table Render
+            const tableBody = document.getElementById('stripeTableBody');
+            tableBody.innerHTML = '';
+            // Sort by date desc
+            const sortedData = [...data].sort((a, b) => {
+                const dA = new Date(a['Created date (UTC)'] || a['Created (UTC)']);
+                const dB = new Date(b['Created date (UTC)'] || b['Created (UTC)']);
+                return dB - dA;
+            });
+
+            sortedData.forEach(r => {
+                const tr = document.createElement('tr');
+                const dateRaw = r['Created date (UTC)'] || r['Created (UTC)'];
+                const date = dateRaw ? new Date(dateRaw).toLocaleDateString() : '';
+                const email = r['Customer Email'] || r['Email'] || 'N/A';
+
+                tr.innerHTML = `
+                    <td>${date}</td>
+                    <td>${formatCurrency(r['Amount'] || 0)}</td>
+                    <td style="color:var(--pd-success)">${formatCurrency(r['Net Amount'] || 0)}</td>
+                    <td style="color:var(--pd-danger)">${formatCurrency(r['Stripe Fee'] || 0)}</td>
+                    <td>${email}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Charts Analysis
+            const declineCounts = {};
+            const currencyVolume = {};
+            const timelineNet = {};
+            const timelineFees = {};
+
+            data.forEach(r => {
+                if (r['Decline Reason']) {
+                    declineCounts[r['Decline Reason']] = (declineCounts[r['Decline Reason']] || 0) + 1;
+                }
+                const cur = r['Currency'] || 'UNK';
+                currencyVolume[cur] = (currencyVolume[cur] || 0) + (parseFloat(r['Amount']) || 0);
+
+                const dateStr = r['Created date (UTC)'] || r['Created (UTC)'];
+                if (dateStr) {
+                    const d = new Date(dateStr);
+                    const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    timelineNet[k] = (timelineNet[k] || 0) + (parseFloat(r['Net Amount']) || 0);
+                    timelineFees[k] = (timelineFees[k] || 0) + (parseFloat(r['Stripe Fee']) || 0);
+                }
+            });
+
+            // Initialize Charts
+            new Chart(document.getElementById('stripeDeclineChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(declineCounts),
+                    datasets: [{
+                        label: 'Rechazos',
+                        data: Object.values(declineCounts),
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#94a3b8' }, grid: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+
+            new Chart(document.getElementById('stripeCurrencyChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(currencyVolume),
+                    datasets: [{
+                        data: Object.values(currencyVolume),
+                        backgroundColor: ['#6366f1', '#ec4899', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } } }
+            });
+
+            const sortedDates = Object.keys(timelineNet).sort();
+            new Chart(document.getElementById('stripeNetFeeChart'), {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [
+                        { label: 'Neto', data: sortedDates.map(k => timelineNet[k]), borderColor: '#10b981', tension: 0.4 },
+                        { label: 'Comisiones', data: sortedDates.map(k => timelineFees[k]), borderColor: '#ef4444', tension: 0.4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#94a3b8' }, grid: { display: false } } }, plugins: { legend: { labels: { color: '#94a3b8' } } } }
+            });
+        }
+
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
+        }
+
+        loadStripeData();
+    })();
+</script>
