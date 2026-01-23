@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material - Instituto de la IA</title>
+
+    <!-- Optimize loading -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#001C3C',
+                        secondary: '#003366',
+                        accent: '#0066CC',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .doc-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .doc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 28, 60, 0.15);
+            border-color: #001C3C;
+        }
+
+        .btn-hover-effect {
+            transition: all 0.2s ease;
+        }
+
+        .btn-hover-effect:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+            background-color: #003366;
+            /* Secondary on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="mb-10 text-center md:text-left border-b border-slate-200 pb-6">
+            <span
+                class="inline-block py-1 px-3 rounded-full bg-blue-50 text-blue-800 text-xs font-bold uppercase tracking-widest mb-3">Recursos
+                Descargables</span>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-primary mb-2">Material de Estudio</h1>
+            <p class="text-slate-500 text-lg">Instituto de la IA - 19 AL 23 DE ENERO</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loader" class="space-y-4">
+            <!-- Skeletons -->
+            <div class="bg-white rounded-xl p-6 h-28 animate-pulse shadow-sm border border-slate-100"></div>
+            <div class="bg-white rounded-xl p-6 h-28 animate-pulse shadow-sm border border-slate-100"></div>
+            <div class="bg-white rounded-xl p-6 h-28 animate-pulse shadow-sm border border-slate-100"></div>
+        </div>
+
+        <!-- Material List -->
+        <div id="materialList" class="space-y-4 hidden">
+            <!-- Javascript will populate this -->
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN: URL DEL APPS SCRIPT
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxk_a6GWODT13WznCgTNM2YYzp_iurjIELqGued0ZtyevFPxze8wwMqxz2CenYH2-mc/exec";
+        const SHEET_NAME = "Material";
+
+        async function loadMaterial() {
+            const listEl = document.getElementById('materialList');
+            const loaderEl = document.getElementById('loader');
+
+            try {
+                if (WEB_APP_URL.includes("INSERT")) {
+                    listEl.innerHTML = errorState("Configura la URL del Apps Script en el código.");
+                    listEl.classList.remove('hidden');
+                    loaderEl.style.display = 'none';
+                    return;
+                }
+
+                const response = await fetch(`${WEB_APP_URL}?t=${new Date().getTime()}`);
+                const data = await response.json();
+
+                console.log("Datos recibidos:", data); // Debug
+
+                // Busqueda flexible
+                const keys = Object.keys(data);
+                const targetKey = keys.find(k => k.toLowerCase().includes("material"));
+
+                if (targetKey && data[targetKey]) {
+                    // Ordenar por número
+                    const items = data[targetKey].sort((a, b) => a.numero - b.numero);
+
+                    if (items.length > 0) {
+                        renderMaterial(items);
+                    } else {
+                        listEl.innerHTML = emptyState();
+                    }
+                } else {
+                    const availableKeys = keys.length > 0 ? keys.join(", ") : "Ninguna";
+                    listEl.innerHTML = errorState(`No se encontró la pestaña "Material".<br><br><span class="text-xs text-red-400">Pestañas encontradas: ${availableKeys}</span>`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                listEl.innerHTML = errorState(`Error de conexión o datos.<br><span class="text-xs text-slate-400">${error.message}</span>`);
+            } finally {
+                loaderEl.style.display = 'none';
+                listEl.classList.remove('hidden');
+            }
+        }
+
+        function renderMaterial(items) {
+            const container = document.getElementById('materialList');
+            container.innerHTML = "";
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "doc-card bg-white border border-slate-200 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 group relative overflow-hidden";
+
+                // Determine icon based on format
+                let icon = getIcon(item.formato);
+
+                div.innerHTML = `
+                    <!-- Number Badge -->
+                    <div class="absolute top-4 right-4 text-xs font-bold text-slate-200 group-hover:text-slate-100 transition-colors pointer-events-none select-none">
+                        #${item.numero}
+                    </div>
+
+                    <!-- Icon -->
+                    <div class="w-16 h-16 bg-slate-50 text-primary rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                        ${icon}
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-1 text-center md:text-left w-full">
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors">${item.titulo}</h3>
+                        <div class="flex items-center justify-center md:justify-start gap-2 text-sm text-slate-500">
+                             <span class="bg-slate-100 px-2 py-0.5 rounded text-xs font-semibold uppercase">${item.formato || 'DOC'}</span>
+                             <span>${item.descripcion ? '• ' + item.descripcion : ''}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action -->
+                    <div class="mt-2 md:mt-0 w-full md:w-auto">
+                        <a href="${item.url}" target="_blank" class="btn-hover-effect inline-flex items-center justify-center gap-2 bg-accent text-white px-8 py-3 rounded-xl font-semibold w-full md:w-auto focus:ring-4 focus:ring-accent/20">
+                            <span>Ver Recurso</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function getIcon(format) {
+            const f = (format || '').toLowerCase();
+            if (f.includes('video')) return `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            if (f.includes('pdf') || f.includes('documento')) return `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>`;
+            return `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>`;
+        }
+
+        function errorState(msg) {
+            return `<div class="bg-red-50 border border-red-100 rounded-xl p-8 text-center text-red-600">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p class="font-medium">${msg}</p>
+            </div>`;
+        }
+
+        function emptyState() {
+            return `<div class="bg-slate-50 border border-slate-100 rounded-xl p-12 text-center text-slate-500">
+                <p class="font-medium">No hay material disponible en este momento.</p>
+            </div>`;
+        }
+
+        loadMaterial();
+    </script>
+</body>
+
+</html>

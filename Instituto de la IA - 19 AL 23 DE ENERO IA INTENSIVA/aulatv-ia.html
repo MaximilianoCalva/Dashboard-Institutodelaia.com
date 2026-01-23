@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AulaTV - Instituto de la IA</title>
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://player.vimeo.com">
+
+    <!-- Google Fonts: Inter for branding consistency -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#001C3C',
+                        secondary: '#003366',
+                        accent: '#0066CC',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Active Item Styling */
+        .playlist-item.active {
+            background: linear-gradient(to right, #eff6ff, #ffffff);
+            border-left: 4px solid #001C3C;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <div class="max-w-[1400px] mx-auto p-4 md:p-6 lg:p-8">
+
+        <!-- Header Section -->
+        <div class="mb-8 animate-fade-in-down">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-primary tracking-tight mb-2">
+                Aula Virtual <span class="text-accent font-light">|</span> IA Intensiva
+            </h1>
+            <p class="text-slate-500 text-lg">19 AL 23 DE ENERO</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8 min-h-[600px]">
+
+            <!-- Main Player Section (Left) -->
+            <div class="w-full lg:w-9/12 flex flex-col gap-6">
+                <!-- Video Container -->
+                <div
+                    class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/10 group">
+                    <iframe id="mainPlayer" src="" class="absolute top-0 left-0 w-full h-full" frameborder="0"
+                        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+
+                    <!-- Placeholder when no video is loaded -->
+                    <div id="videoPlaceholder"
+                        class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-white z-0 header-bg">
+                        <svg class="w-20 h-20 text-white/20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-lg font-light text-slate-400">Selecciona una clase de la lista para comenzar</p>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <span
+                                class="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider mb-3">Clase
+                                Actual</span>
+                            <h2 id="mainTitle" class="text-2xl md:text-3xl font-bold text-slate-800 leading-tight mb-2">
+                                Bienvenido al curso</h2>
+                            <p id="mainDesc" class="text-slate-500 text-base leading-relaxed max-w-3xl">--</p>
+                        </div>
+                        <div class="hidden md:flex flex-col items-end text-right">
+                            <div class="text-4xl font-black text-slate-100" id="classNumber">#</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playlist Section (Right) -->
+            <div
+                class="w-full lg:w-3/12 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden h-[600px] lg:h-auto lg:max-h-[800px]">
+
+                <!-- Search Header -->
+                <div class="p-5 border-b border-slate-100 bg-white sticky top-0 z-20">
+                    <h3 class="font-bold text-slate-800 mb-4 text-lg">Contenido del Módulo</h3>
+                    <div class="relative group">
+                        <input type="text" id="searchInput" placeholder="Buscar clase..."
+                            class="w-full pl-11 pr-4 py-3 bg-slate-50 rounded-xl border border-slate-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all group-hover:bg-white"
+                            onkeyup="filterPlaylist()">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playlist Items -->
+                <div class="overflow-y-auto flex-1 custom-scrollbar scroll-smooth" id="playlistItems">
+                    <!-- Loading Skeleton -->
+                    <div class="p-6 space-y-4 animate-pulse" id="skeletonLoader">
+                        <div class="h-16 bg-slate-100 rounded-xl"></div>
+                        <div class="h-16 bg-slate-100 rounded-xl"></div>
+                        <div class="h-16 bg-slate-100 rounded-xl"></div>
+                        <div class="h-16 bg-slate-100 rounded-xl"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Status -->
+                <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                    <p class="text-xs text-slate-400 font-medium" id="totalClasses">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN: URL DEL APPS SCRIPT
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxk_a6GWODT13WznCgTNM2YYzp_iurjIELqGued0ZtyevFPxze8wwMqxz2CenYH2-mc/exec";
+        const SHEET_NAME = "AulaTV";
+
+        let allVideos = [];
+
+        async function loadPlaylist() {
+            try {
+                if (WEB_APP_URL.includes("INSERT")) {
+                    showError("Configura la URL del Apps Script");
+                    return;
+                }
+
+                const response = await fetch(`${WEB_APP_URL}?t=${new Date().getTime()}`);
+                const data = await response.json();
+
+                console.log("Datos recibidos:", data); // Debug for user
+
+                // Busqueda flexible de la pestaña (ignora mayúsculas/minúsculas y espacios extra)
+                const keys = Object.keys(data);
+                const targetKey = keys.find(k => k.toLowerCase().includes("aulatv"));
+
+                if (targetKey && data[targetKey]) {
+                    // Ordenar por número (Columna A)
+                    allVideos = data[targetKey].sort((a, b) => a.numero - b.numero);
+
+                    document.getElementById('skeletonLoader').remove();
+                    renderItems(allVideos);
+                    document.getElementById('totalClasses').innerText = `${allVideos.length} clases disponibles`;
+
+                    // Auto-play first video if available
+                    if (allVideos.length > 0) {
+                        const first = allVideos[0];
+                        updatePlayer(first.url, first.titulo, first.descripcion, first.numero);
+
+                        // Set first item active visually
+                        setTimeout(() => {
+                            const firstItem = document.querySelector('.playlist-item');
+                            if (firstItem) firstItem.classList.add('active');
+                        }, 50);
+                    }
+                } else {
+                    const availableKeys = keys.length > 0 ? keys.join(", ") : "Ninguna";
+                    showError(`No se encontró la pestaña "AulaTV".<br><br><span class="text-xs text-red-400">Pestañas encontradas en el Excel: ${availableKeys}</span>`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showError(`Error de conexión o datos.<br><span class="text-xs text-slate-400">${error.message}</span>`);
+            }
+        }
+
+        function renderItems(videos) {
+            const container = document.getElementById('playlistItems');
+            container.innerHTML = "";
+
+            if (videos.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-400 flex flex-col items-center">
+                    <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-sm">No hay clases que coincidan.</span>
+                 </div>`;
+                return;
+            }
+
+            videos.forEach((video) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item group p-4 border-b border-slate-100 hover:bg-slate-50 cursor-pointer flex gap-4 transition-all duration-200`;
+                item.onclick = function () {
+                    // Update active state
+                    document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+
+                    updatePlayer(video.url, video.titulo, video.descripcion, video.numero);
+                };
+
+                item.innerHTML = `
+                    <div class="flex-none flex items-start pt-1">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-primary font-bold text-sm flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+                            ${video.numero}
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-semibold text-slate-700 leading-snug group-hover:text-primary transition-colors mb-1">
+                            ${video.titulo}
+                        </h4>
+                        <p class="text-xs text-slate-400 line-clamp-1">${video.descripcion || ''}</p>
+                    </div>
+                    <div class="flex-none flex items-center text-slate-300">
+                        <svg class="w-5 h-5 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updatePlayer(url, title, desc, num) {
+            let embedUrl = url;
+            if (url && url.includes("vimeo.com") && !url.includes("player")) {
+                // Extract ID carefully handling query params
+                const id = url.split("vimeo.com/")[1].split("?")[0].split("&")[0];
+                embedUrl = `https://player.vimeo.com/video/${id}?autoplay=1`;
+            } else if (embedUrl && !embedUrl.includes("autoplay=1")) {
+                embedUrl += (embedUrl.includes("?") ? "&" : "?") + "autoplay=1";
+            }
+
+            // Bring player to front (hide placeholder)
+            document.getElementById('videoPlaceholder').style.display = 'none';
+            document.getElementById('mainPlayer').src = embedUrl;
+
+            // Animations for text update
+            const titleEl = document.getElementById('mainTitle');
+            const descEl = document.getElementById('mainDesc');
+
+            titleEl.style.opacity = '0';
+            descEl.style.opacity = '0';
+
+            setTimeout(() => {
+                titleEl.innerText = title;
+                descEl.innerText = desc || 'Sin descripción disponible.';
+                document.getElementById('classNumber').innerText = `#${num}`;
+
+                titleEl.style.opacity = '1';
+                descEl.style.opacity = '1';
+            }, 200);
+
+            // Scroll to top on mobile
+            if (window.innerWidth < 1024) {
+                document.getElementById('mainPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function filterPlaylist() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allVideos.filter(v =>
+                v.titulo.toLowerCase().includes(query) ||
+                (v.descripcion && v.descripcion.toLowerCase().includes(query))
+            );
+            renderItems(filtered);
+        }
+
+        function showError(msg) {
+            document.getElementById('playlistItems').innerHTML = `
+                <div class="flex flex-col items-center justify-center p-8 text-center h-full">
+                    <div class="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <p class="text-sm font-medium text-slate-600">${msg}</p>
+                </div>`;
+        }
+
+        loadPlaylist();
+    </script>
+</body>
+
+</html>
