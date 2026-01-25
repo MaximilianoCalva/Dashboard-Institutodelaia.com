@@ -182,12 +182,14 @@
                 const targetKey = keys.find(k => k.toLowerCase().includes("aulatv"));
 
                 if (targetKey && data[targetKey]) {
-                    // Ordenar por número (Columna A)
-                    allVideos = data[targetKey].sort((a, b) => a.numero - b.numero);
+                    // Usar el orden original del Sheet (sin sort)
+                    allVideos = data[targetKey];
 
                     document.getElementById('skeletonLoader').remove();
+
+                    // Render inicial (primeros 4)
+                    visibleCount = 4;
                     renderItems(allVideos);
-                    document.getElementById('totalClasses').innerText = `${allVideos.length} clases disponibles`;
 
                     // Auto-play first video if available
                     if (allVideos.length > 0) {
@@ -210,6 +212,8 @@
             }
         }
 
+        let visibleCount = 4;
+
         function renderItems(videos) {
             const container = document.getElementById('playlistItems');
             container.innerHTML = "";
@@ -219,17 +223,24 @@
                     <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="text-sm">No hay clases que coincidan.</span>
                  </div>`;
+                document.getElementById('totalClasses').innerText = `0 clases`;
                 return;
             }
 
-            videos.forEach((video) => {
+            // Slice videos based on visibleCount
+            const videosToShow = videos.slice(0, visibleCount);
+
+            videosToShow.forEach((video) => {
                 const item = document.createElement('div');
                 item.className = `playlist-item group p-4 border-b border-slate-100 hover:bg-slate-50 cursor-pointer flex gap-4 transition-all duration-200`;
+
+                // Add active class if this is the currently playing video
+                const currentSrc = document.getElementById('mainPlayer').src;
+                // Simple check, can be improved but works for now as initial load sets it
+
                 item.onclick = function () {
-                    // Update active state
                     document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
                     this.classList.add('active');
-
                     updatePlayer(video.url, video.titulo, video.descripcion, video.numero);
                 };
 
@@ -245,12 +256,36 @@
                         </h4>
                         <p class="text-xs text-slate-400 line-clamp-1">${video.descripcion || ''}</p>
                     </div>
-                    <div class="flex-none flex items-center text-slate-300">
-                        <svg class="w-5 h-5 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
                 `;
                 container.appendChild(item);
             });
+
+            // "Load More" Button
+            if (videos.length > visibleCount) {
+                const btnContainer = document.createElement('div');
+                btnContainer.className = "p-4 text-center";
+                btnContainer.innerHTML = `
+                    <button onclick="loadMore()" class="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full text-sm font-bold transition-colors">
+                        Cargar más videos
+                    </button>
+                `;
+                container.appendChild(btnContainer);
+            }
+
+            // Update footer count
+            const showing = Math.min(visibleCount, videos.length);
+            document.getElementById('totalClasses').innerText = `Mostrando ${showing} de ${videos.length} clases`;
+        }
+
+        function loadMore() {
+            visibleCount += 4;
+            // Re-render with new count, filtering if search is active
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query) {
+                filterPlaylist(); // Will use new visibleCount on filtered list
+            } else {
+                renderItems(allVideos);
+            }
         }
 
         function updatePlayer(url, title, desc, num) {
