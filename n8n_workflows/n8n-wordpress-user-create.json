@@ -1,0 +1,202 @@
+{
+    "nodes": [
+        {
+            "parameters": {},
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                -220,
+                0
+            ],
+            "id": "deff62c7-e03d-4efb-86af-5b7de1cf298e",
+            "name": "Start"
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": {
+                    "__rl": true,
+                    "value": "18lb3bQhGERM8kuvJD-SkEf0OxBQfG6yWkcZwEfNJzjw",
+                    "mode": "list",
+                    "cachedResultName": "Instituto de la IA - Alumnos (activos/inactivos)",
+                    "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18lb3bQhGERM8kuvJD-SkEf0OxBQfG6yWkcZwEfNJzjw/edit?usp=drivesdk"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "gid=0",
+                    "mode": "list",
+                    "cachedResultName": "panel.institutodelaia.com",
+                    "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18lb3bQhGERM8kuvJD-SkEf0OxBQfG6yWkcZwEfNJzjw/edit#gid=0"
+                },
+                "options": {}
+            },
+            "name": "Get Sheet Users",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.4,
+            "position": [
+                0,
+                -100
+            ],
+            "id": "get-sheet-users",
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "LPf4qZBpPvUSzo8f",
+                    "name": "diseno4.impulsomarketing@gmail.com"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "user",
+                "operation": "getAll",
+                "limit": 2000,
+                "options": {
+                    "fields": [
+                        "id",
+                        "email"
+                    ]
+                }
+            },
+            "name": "Get All WP Users",
+            "type": "n8n-nodes-base.wordpress",
+            "typeVersion": 1,
+            "position": [
+                0,
+                100
+            ],
+            "id": "get-wp-users",
+            "credentials": {
+                "wordpressApi": {
+                    "id": "Xrm7QUSMdJpolnry",
+                    "name": "https://panel.institutodelaia.com"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "mode": "append",
+                "options": {}
+            },
+            "name": "Wait Both",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3,
+            "position": [
+                250,
+                0
+            ],
+            "id": "wait-both"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Access data from the two inputs explicitly\nconst sheetUsers = $('Get Sheet Users').all();\nconst wpUsers = $('Get All WP Users').all();\n\nconst existingEmails = new Set(wpUsers.map(u => (u.json.email ? u.json.email.toLowerCase() : '')));\n\nconst newUsers = [];\n\nfor (const item of sheetUsers) {\n  const rawEmail = item.json.Correo;\n  if (!rawEmail || rawEmail.toString().trim() === '') continue;\n  \n  const email = rawEmail.toString().trim().toLowerCase();\n  \n  // Check if exists\n  if (existingEmails.has(email)) {\n    continue; // Skip existing\n  }\n  \n  // Prepare new user object\n  const fullName = (item.json.Nombre || '').toString().trim();\n  const nameParts = fullName.split(' ');\n  const firstName = nameParts[0] || '';\n  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';\n  const password = (item.json['N° de alumno'] || 'DefaultPass123!').toString().trim();\n\n  newUsers.push({\n    json: {\n      email: rawEmail.toString().trim(),\n      username: rawEmail.toString().trim(),\n      name: fullName,\n      first_name: firstName,\n      last_name: lastName,\n      password: password\n    }\n  });\n}\n\nreturn newUsers;"
+            },
+            "name": "Filter New Users",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                450,
+                0
+            ],
+            "id": "filter-new-users"
+        },
+        {
+            "parameters": {
+                "resource": "user",
+                "operation": "create",
+                "username": "={{ $json.username }}",
+                "email": "={{ $json.email }}",
+                "name": "={{ $json.name }}",
+                "firstName": "={{ $json.first_name }}",
+                "lastName": "={{ $json.last_name }}",
+                "password": "={{ $json.password }}",
+                "additionalFields": {
+                    "roles": [
+                        "subscriber"
+                    ]
+                }
+            },
+            "name": "Create User",
+            "type": "n8n-nodes-base.wordpress",
+            "typeVersion": 1,
+            "position": [
+                680,
+                0
+            ],
+            "id": "create-user",
+            "continueOnFail": true,
+            "credentials": {
+                "wordpressApi": {
+                    "id": "Xrm7QUSMdJpolnry",
+                    "name": "https://panel.institutodelaia.com"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Get Sheet Users",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Get All WP Users",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Sheet Users": {
+            "main": [
+                [
+                    {
+                        "node": "Wait Both",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get All WP Users": {
+            "main": [
+                [
+                    {
+                        "node": "Wait Both",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Wait Both": {
+            "main": [
+                [
+                    {
+                        "node": "Filter New Users",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter New Users": {
+            "main": [
+                [
+                    {
+                        "node": "Create User",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "3a54f9858961d6a8de3ba4e915ac8d0e4ae80bcd3db7f786bb8f5b77301d8dd3"
+    }
+}
