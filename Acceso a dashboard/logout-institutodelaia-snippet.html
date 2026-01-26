@@ -154,16 +154,16 @@
 
     <!-- Tabs Navigation -->
     <div class="tabs-navigation">
-        <button class="tab-button active" onclick="switchTab('login')">
+        <button class="tab-button active" onclick="switchIaLogoutTab('login', this)">
             Iniciar Sesión
         </button>
-        <button class="tab-button" onclick="switchTab('register')">
+        <button class="tab-button" onclick="switchIaLogoutTab('register', this)">
             Registrarse
         </button>
     </div>
 
     <!-- Tab Content: Login -->
-    <div id="login-tab" class="tab-content active">
+    <div id="ia-logout-tab-login" class="tab-content active">
         <p class="login-instructions">
             Ingresa tu correo y contraseña para acceder a tu dashboard
         </p>
@@ -171,31 +171,24 @@
     </div>
 
     <!-- Tab Content: Register -->
-    <div id="register-tab" class="tab-content">
+    <div id="ia-logout-tab-register" class="tab-content">
         <p class="login-instructions">
             Crea tu cuenta para unirte a nuestra comunidad
         </p>
-        [user_registration_form id="654"]
+        [user_registration_form id="687"]
     </div>
 </div>
 
 <script>
-    function switchTab(tabName) {
-        // Ocultar todos los tabs
-        const allTabs = document.querySelectorAll('.tab-content');
-        allTabs.forEach(tab => tab.classList.remove('active'));
+    function switchIaLogoutTab(tabName, btn) {
+        var container = btn.closest('.ia-logout-form');
+        var allTabs = container.querySelectorAll('.tab-content');
+        allTabs.forEach(function (tab) { tab.classList.remove('active'); });
 
-        // Desactivar todos los botones
-        const allButtons = document.querySelectorAll('.tab-button');
-        allButtons.forEach(button => button.classList.remove('active'));
+        var allButtons = container.querySelectorAll('.tab-button');
+        allButtons.forEach(function (button) { button.classList.remove('active'); });
 
-        // Activar el tab seleccionado
-        if (tabName === 'login') {
-            document.getElementById('login-tab').classList.add('active');
-            document.querySelectorAll('.tab-button')[0].classList.add('active');
-        } else if (tabName === 'register') {
-            document.getElementById('register-tab').classList.add('active');
-            document.querySelectorAll('.tab-button')[1].classList.add('active');
-        }
+        container.querySelector('#ia-logout-tab-' + tabName).classList.add('active');
+        btn.classList.add('active');
     }
 </script>
